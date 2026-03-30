@@ -21,27 +21,34 @@ public class HydroponiCraftMod {
     }
 
     private static void registerCapabilities(RegisterCapabilitiesEvent event) {
-        // Digester: item handler exposed only on top face (hopper feeds from above)
+        // Digester: item handler exposed on top face (hopper/funnel feeds from above)
+        // Also exposed on null side so internal/automation queries work
         event.registerBlockEntity(
                 Capabilities.ItemHandler.BLOCK,
                 HydroponiCraftRegistry.DIGESTER_BE.get(),
-                (be, side) -> side == Direction.UP ? be.itemHandler : null);
+                (be, side) -> (side == null || side == Direction.UP) ? be.itemHandler : null);
 
-        // Digester: fluid tank exposed only on the model-east face (facing.getClockWise())
+        // Digester: fluid tank exposed on all sides except top (hopper input)
+        // and model-east / shaft face (facing.getClockWise())
         event.registerBlockEntity(
                 Capabilities.FluidHandler.BLOCK,
                 HydroponiCraftRegistry.DIGESTER_BE.get(),
                 (be, side) -> {
-                    if (side == null) return be.fluidTank;
+                    if (side == Direction.UP) return null;
                     Direction facing = be.getBlockState().getValue(DigesterBlock.FACING);
-                    return side == facing.getClockWise() ? be.fluidTank : null;
+                    if (side == facing.getClockWise()) return null;
+                    return be.fluidTank;
                 });
 
-        // Mixer: expose output tank on all sides so Create fluid pipes can connect
+        // Mixer: input handler on all horizontal faces; output tank on bottom only
         event.registerBlockEntity(
                 Capabilities.FluidHandler.BLOCK,
                 HydroponiCraftRegistry.MIXER_BE.get(),
-                (be, side) -> be.outputTank);
+                (be, side) -> {
+                    if (side == null || side == Direction.UP) return null;
+                    if (side == Direction.DOWN) return be.outputTank;
+                    return be.inputHandler;
+                });
 
         // Growth Bed: fluid input on all sides except top (crops are planted on top)
         event.registerBlockEntity(
@@ -65,6 +72,8 @@ public class HydroponiCraftMod {
         event.accept(HydroponiCraftFluids.YIELD_TONIC_BUCKET.get());
         event.accept(HydroponiCraftFluids.ACCELERANT_SOLUTION_BUCKET.get());
         event.accept(HydroponiCraftFluids.BALANCED_BLEND_BUCKET.get());
+        event.accept(HydroponiCraftFluids.NETHER_WART_FLUID_BUCKET.get());
+        event.accept(HydroponiCraftFluids.CHORUS_FRUIT_FLUID_BUCKET.get());
     }
 
 }

@@ -35,6 +35,12 @@ public class GrowthBedBlockEntity extends BlockEntity {
         }
     };
 
+    /** Base interval in server ticks between growth advances at 1.0x speed multiplier. */
+    private static final int BASE_INTERVAL = 100;
+
+    /** Counts server ticks since the last growth advance. */
+    private int tickCounter = 0;
+
     public GrowthBedBlockEntity(BlockPos pos, BlockState state) {
         super(HydroponiCraftRegistry.GROWTH_BED_BE.get(), pos, state);
     }
@@ -46,41 +52,44 @@ public class GrowthBedBlockEntity extends BlockEntity {
     public void tick() {
         if (level == null || level.isClientSide()) return;
 
-        BlockPos cropPos = worldPosition.above();
-        BlockState cropState = level.getBlockState(cropPos);
+        tickCounter++;
 
-        if (!(cropState.getBlock() instanceof CropBlock crop)) return;
-
+        // Check fluid before computing threshold — bail early if tank is dry
         FluidStack fluid = fluidTank.getFluid();
-        if (fluid.isEmpty() || fluidTank.getFluidAmount() < 250) return;
+        if (fluid.isEmpty() || fluidTank.getFluidAmount() < 25) return;
 
         Optional<GrowthModifier> modOpt = GrowthModifier.get(fluid.getFluid());
         if (modOpt.isEmpty()) return;
 
         GrowthModifier modifier = modOpt.get();
-        ServerLevel serverLevel = (ServerLevel) level;
 
-        fluidTank.drain(250, IFluidHandler.FluidAction.EXECUTE);
+        // Higher speed multiplier → shorter interval between growth ticks
+        int threshold = Math.max(1, (int) (BASE_INTERVAL / modifier.speedMultiplier()));
+        if (tickCounter < threshold) return;
+        tickCounter = 0;
+
+        BlockPos cropPos = worldPosition.above();
+        BlockState cropState = level.getBlockState(cropPos);
+        if (!(cropState.getBlock() instanceof CropBlock crop)) return;
+
+        // Consume fluid and advance crop by one age stage
+        fluidTank.drain(25, IFluidHandler.FluidAction.EXECUTE);
         setChanged();
 
-        int extraTicks = Math.round(modifier.speedMultiplier());
-        for (int i = 0; i < extraTicks; i++) {
-            BlockState current = level.getBlockState(cropPos);
-            if (!(current.getBlock() instanceof CropBlock currentCrop)) return;
+        ServerLevel serverLevel = (ServerLevel) level;
 
-            if (currentCrop.isMaxAge(current)) {
-                harvestCrop(serverLevel, cropPos, current, modifier);
-                return;
-            }
-            // Advance age by one stage (equivalent to one randomTick without light checks)
-            int nextAge = Math.min(currentCrop.getAge(current) + 1, currentCrop.getMaxAge());
-            serverLevel.setBlock(cropPos, currentCrop.getStateForAge(nextAge), 2);
+        if (crop.isMaxAge(cropState)) {
+            harvestCrop(serverLevel, cropPos, cropState, modifier);
+            return;
         }
 
-        // One final check after all ticks in case the last one pushed to max age
-        BlockState finalState = level.getBlockState(cropPos);
-        if (finalState.getBlock() instanceof CropBlock finalCrop && finalCrop.isMaxAge(finalState)) {
-            harvestCrop(serverLevel, cropPos, finalState, modifier);
+        int nextAge = Math.min(crop.getAge(cropState) + 1, crop.getMaxAge());
+        serverLevel.setBlock(cropPos, crop.getStateForAge(nextAge), 2);
+
+        // Harvest immediately if the single advance pushed the crop to max age
+        BlockState advanced = level.getBlockState(cropPos);
+        if (advanced.getBlock() instanceof CropBlock advCrop && advCrop.isMaxAge(advanced)) {
+            harvestCrop(serverLevel, cropPos, advanced, modifier);
         }
     }
 

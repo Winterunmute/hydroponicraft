@@ -1,6 +1,5 @@
 package com.hydroponicraft.blockentity;
 
-import com.hydroponicraft.HydroponiCraftFluids;
 import com.hydroponicraft.HydroponiCraftRegistry;
 import com.hydroponicraft.recipe.DigesterRecipe;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
@@ -23,13 +22,8 @@ public class DigesterBlockEntity extends KineticBlockEntity {
     /** Single organic input slot — fed by hopper from above. */
     public final ItemStackHandler itemHandler = new ItemStackHandler(1);
 
-    /** Output tank — accepts only Nutrient Fluid, 8 000 mB capacity. */
-    public final FluidTank fluidTank = new FluidTank(8_000) {
-        @Override
-        public boolean isFluidValid(FluidStack stack) {
-            return stack.getFluid() == HydroponiCraftFluids.NUTRIENT_FLUID.get();
-        }
-    };
+    /** Output tank — accepts any fluid (recipe determines what is produced), 8 000 mB capacity. */
+    public final FluidTank fluidTank = new FluidTank(8_000);
 
     private int processingTicks = 0;
     private int maxTicks        = 0;
@@ -72,7 +66,14 @@ public class DigesterBlockEntity extends KineticBlockEntity {
         }
 
         DigesterRecipe recipe = match.get().value();
+        net.minecraft.world.level.material.Fluid outputFluid = recipe.resolveOutputFluid();
 
+        // If the tank already holds a different fluid, wait until it drains
+        if (!fluidTank.isEmpty() && fluidTank.getFluid().getFluid() != outputFluid) {
+            processingTicks = 0;
+            maxTicks = 0;
+            return;
+        }
         if (fluidTank.getFluidAmount() + recipe.fluidOutputMb() > fluidTank.getCapacity()) {
             processingTicks = 0;
             maxTicks = 0;
@@ -86,8 +87,7 @@ public class DigesterBlockEntity extends KineticBlockEntity {
         if (processingTicks >= maxTicks) {
             processingTicks = 0;
             itemHandler.extractItem(0, 1, false);
-            fluidTank.fill(
-                    new FluidStack(HydroponiCraftFluids.NUTRIENT_FLUID.get(), recipe.fluidOutputMb()),
+            fluidTank.fill(new FluidStack(outputFluid, recipe.fluidOutputMb()),
                     IFluidHandler.FluidAction.EXECUTE);
             setChanged();
         }

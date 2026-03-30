@@ -1,6 +1,7 @@
 {
   "type": "hydroponicraft:digesting",
   "ingredient": { "item": "minecraft:nether_wart" },
-  "fluid_output_mb": 1500,
-  "base_ticks": 300
+  "fluid_output_mb": 1000,
+  "base_ticks": 300,
+  "output_fluid": "hydroponicraft:nether_wart_fluid"
 }

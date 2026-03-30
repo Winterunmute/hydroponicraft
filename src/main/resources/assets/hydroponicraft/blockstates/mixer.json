@@ -1,8 +1,5 @@
 {
   "variants": {
-    "facing=north": { "model": "hydroponicraft:block/mixer" },
-    "facing=east":  { "model": "hydroponicraft:block/mixer", "y": 90 },
-    "facing=south": { "model": "hydroponicraft:block/mixer", "y": 180 },
-    "facing=west":  { "model": "hydroponicraft:block/mixer", "y": 270 }
+    "": { "model": "hydroponicraft:block/mixer" }
   }
 }

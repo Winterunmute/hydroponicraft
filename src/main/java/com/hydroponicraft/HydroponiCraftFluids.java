@@ -27,6 +27,8 @@ public class HydroponiCraftFluids {
     public static BaseFlowingFluid.Properties YIELD_TONIC_PROPS;
     public static BaseFlowingFluid.Properties ACCELERANT_SOLUTION_PROPS;
     public static BaseFlowingFluid.Properties BALANCED_BLEND_PROPS;
+    public static BaseFlowingFluid.Properties NETHER_WART_FLUID_PROPS;
+    public static BaseFlowingFluid.Properties CHORUS_FRUIT_FLUID_PROPS;
 
     // -------------------------------------------------------------------------
     // Nutrient Fluid  (raw Digester output — earthy green)
@@ -173,6 +175,54 @@ public class HydroponiCraftFluids {
                     () -> new BucketItem(BALANCED_BLEND.get(), bucketProps()));
 
     // -------------------------------------------------------------------------
+    // Nether Wart Fluid  (Digester output from nether wart — deep red)
+    // -------------------------------------------------------------------------
+
+    public static final DeferredHolder<FluidType, FluidType> NETHER_WART_FLUID_TYPE =
+            HydroponiCraftRegistry.FLUID_TYPES.register("nether_wart_fluid",
+                    () -> makeType(0xFFAA2222));
+
+    public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> NETHER_WART_FLUID =
+            HydroponiCraftRegistry.FLUIDS.register("nether_wart_fluid",
+                    () -> new BaseFlowingFluid.Source(NETHER_WART_FLUID_PROPS));
+
+    public static final DeferredHolder<Fluid, BaseFlowingFluid.Flowing> NETHER_WART_FLUID_FLOWING =
+            HydroponiCraftRegistry.FLUIDS.register("nether_wart_fluid_flowing",
+                    () -> new BaseFlowingFluid.Flowing(NETHER_WART_FLUID_PROPS));
+
+    public static final DeferredHolder<net.minecraft.world.level.block.Block, LiquidBlock> NETHER_WART_FLUID_BLOCK =
+            HydroponiCraftRegistry.BLOCKS.register("nether_wart_fluid",
+                    () -> new LiquidBlock(NETHER_WART_FLUID.get(), fluidBlockProps()));
+
+    public static final DeferredHolder<Item, BucketItem> NETHER_WART_FLUID_BUCKET =
+            HydroponiCraftRegistry.ITEMS.register("nether_wart_fluid_bucket",
+                    () -> new BucketItem(NETHER_WART_FLUID.get(), bucketProps()));
+
+    // -------------------------------------------------------------------------
+    // Chorus Fruit Fluid  (Digester output from chorus fruit — dark orchid)
+    // -------------------------------------------------------------------------
+
+    public static final DeferredHolder<FluidType, FluidType> CHORUS_FRUIT_FLUID_TYPE =
+            HydroponiCraftRegistry.FLUID_TYPES.register("chorus_fruit_fluid",
+                    () -> makeType(0xFF9932CC));
+
+    public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> CHORUS_FRUIT_FLUID =
+            HydroponiCraftRegistry.FLUIDS.register("chorus_fruit_fluid",
+                    () -> new BaseFlowingFluid.Source(CHORUS_FRUIT_FLUID_PROPS));
+
+    public static final DeferredHolder<Fluid, BaseFlowingFluid.Flowing> CHORUS_FRUIT_FLUID_FLOWING =
+            HydroponiCraftRegistry.FLUIDS.register("chorus_fruit_fluid_flowing",
+                    () -> new BaseFlowingFluid.Flowing(CHORUS_FRUIT_FLUID_PROPS));
+
+    public static final DeferredHolder<net.minecraft.world.level.block.Block, LiquidBlock> CHORUS_FRUIT_FLUID_BLOCK =
+            HydroponiCraftRegistry.BLOCKS.register("chorus_fruit_fluid",
+                    () -> new LiquidBlock(CHORUS_FRUIT_FLUID.get(), fluidBlockProps()));
+
+    public static final DeferredHolder<Item, BucketItem> CHORUS_FRUIT_FLUID_BUCKET =
+            HydroponiCraftRegistry.ITEMS.register("chorus_fruit_fluid_bucket",
+                    () -> new BucketItem(CHORUS_FRUIT_FLUID.get(), bucketProps()));
+
+    // -------------------------------------------------------------------------
     // Static initialiser — assign all Properties now that every holder exists
     // -------------------------------------------------------------------------
 
@@ -200,6 +250,14 @@ public class HydroponiCraftFluids {
         BALANCED_BLEND_PROPS = new BaseFlowingFluid.Properties(
                 BALANCED_BLEND_TYPE::get, BALANCED_BLEND::get, BALANCED_BLEND_FLOWING::get)
                 .bucket(BALANCED_BLEND_BUCKET::get).block(BALANCED_BLEND_BLOCK::get);
+
+        NETHER_WART_FLUID_PROPS = new BaseFlowingFluid.Properties(
+                NETHER_WART_FLUID_TYPE::get, NETHER_WART_FLUID::get, NETHER_WART_FLUID_FLOWING::get)
+                .bucket(NETHER_WART_FLUID_BUCKET::get).block(NETHER_WART_FLUID_BLOCK::get);
+
+        CHORUS_FRUIT_FLUID_PROPS = new BaseFlowingFluid.Properties(
+                CHORUS_FRUIT_FLUID_TYPE::get, CHORUS_FRUIT_FLUID::get, CHORUS_FRUIT_FLUID_FLOWING::get)
+                .bucket(CHORUS_FRUIT_FLUID_BUCKET::get).block(CHORUS_FRUIT_FLUID_BLOCK::get);
     }
 
     // -------------------------------------------------------------------------

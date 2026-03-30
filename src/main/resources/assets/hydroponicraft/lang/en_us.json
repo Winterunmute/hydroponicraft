@@ -6,21 +6,23 @@
   "item.hydroponicraft.mixer":      "Mixer",
   "item.hydroponicraft.growth_bed": "Growth Bed",
 
-  "item.hydroponicraft.nutrient_fluid_bucket":      "Nutrient Fluid Bucket",
-  "item.hydroponicraft.nutrient_solution_bucket":   "Nutrient Solution Bucket",
-  "item.hydroponicraft.enriched_solution_bucket":   "Enriched Solution Bucket",
-  "item.hydroponicraft.yield_tonic_bucket":         "Yield Tonic Bucket",
-  "item.hydroponicraft.accelerant_solution_bucket": "Accelerant Solution Bucket",
-  "item.hydroponicraft.balanced_blend_bucket":      "Balanced Blend Bucket",
+  "item.hydroponicraft.nutrient_fluid_bucket":       "Nutrient Fluid Bucket",
+  "item.hydroponicraft.nutrient_solution_bucket":    "Nutrient Solution Bucket",
+  "item.hydroponicraft.enriched_solution_bucket":    "Enriched Solution Bucket",
+  "item.hydroponicraft.yield_tonic_bucket":          "Yield Tonic Bucket",
+  "item.hydroponicraft.accelerant_solution_bucket":  "Accelerant Solution Bucket",
+  "item.hydroponicraft.balanced_blend_bucket":       "Balanced Blend Bucket",
+  "item.hydroponicraft.nether_wart_fluid_bucket":    "Nether Wart Fluid Bucket",
+  "item.hydroponicraft.chorus_fruit_fluid_bucket":   "Chorus Fruit Fluid Bucket",
 
-  "fluid.hydroponicraft.nutrient_fluid":      "Nutrient Fluid",
-  "fluid.hydroponicraft.nutrient_solution":   "Nutrient Solution",
-  "fluid.hydroponicraft.enriched_solution":   "Enriched Solution",
-  "fluid.hydroponicraft.yield_tonic":         "Yield Tonic",
-  "fluid.hydroponicraft.accelerant_solution": "Accelerant Solution",
-  "fluid.hydroponicraft.balanced_blend":      "Balanced Blend",
-
-  "container.hydroponicraft.digester": "Digester",
+  "fluid_type.hydroponicraft.nutrient_fluid":       "Nutrient Fluid",
+  "fluid_type.hydroponicraft.nutrient_solution":    "Nutrient Solution",
+  "fluid_type.hydroponicraft.enriched_solution":    "Enriched Solution",
+  "fluid_type.hydroponicraft.yield_tonic":          "Yield Tonic",
+  "fluid_type.hydroponicraft.accelerant_solution":  "Accelerant Solution",
+  "fluid_type.hydroponicraft.balanced_blend":       "Balanced Blend",
+  "fluid_type.hydroponicraft.nether_wart_fluid":    "Nether Wart Fluid",
+  "fluid_type.hydroponicraft.chorus_fruit_fluid":   "Chorus Fruit Fluid",
 
   "itemGroup.hydroponicraft": "Hydroponicraft"
 }

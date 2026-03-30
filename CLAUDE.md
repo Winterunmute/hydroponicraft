@@ -81,7 +81,7 @@ Organic Items → Digester (Create-powered) → Nutrient Fluid → Mixer (Create
 - The current implementation has a seed slot that should be removed. See "Next actions" below.
 
 ### Next actions when resuming:
-1. **Digester redesign** — Remove GUI entirely (no `useWithoutItem`, no `DigesterMenu`/`DigesterScreen`). Reduce to 1 input slot, hopper-fed from above. Remove `seedHandler` capability from Growth Bed (`GrowthBedBlockEntity` seed slot already removed). Shaft stays on model-west face (`facing.getCounterClockWise()`); fluid output stays on model-east face (`facing.getClockWise()`).
+1. **Digester redesign** — Remove GUI entirely (no `useWithoutItem`, no `DigesterMenu`/`DigesterScreen`). Reduce to 1 input slot, hopper-fed from above. Remove `seedHandler` capability from Growth Bed (`GrowthBedBlockEntity` seed slot already removed). Shaft on model-east face (`facing.getClockWise()`); fluid output on all faces except `Direction.UP` and `facing.getClockWise()` (west, north, south, bottom).
 2. **Balance fixes** — Growth Bed tick rate and fluid consumption (250 mB/tick) are too aggressive.
 3. **Fix en_us.json** — fluid display names may use wrong keys; NeoForge 1.21.1 uses `fluid_type.hydroponicraft.*` format. Verify creative tab appears in creative menu.
 4. **Growth Bed textures + Blockbench model** — still vanilla placeholder textures.

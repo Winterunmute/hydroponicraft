@@ -12,21 +12,61 @@ import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
 
-import java.util.Optional;
-
 public class MixerBlockEntity extends KineticBlockEntity {
 
-    /** Tank 1: first required fluid input (e.g. Nutrient Fluid), max 4 000 mB. */
+    /** Tank 1: first fluid input, max 4 000 mB. */
     public final FluidTank inputTank1 = new FluidTank(4_000);
 
-    /** Tank 2: second required fluid input (e.g. Water), max 4 000 mB. */
+    /** Tank 2: second fluid input, max 4 000 mB. */
     public final FluidTank inputTank2 = new FluidTank(4_000);
-
-    /** Tank 3: optional additive fluid input, max 4 000 mB. */
-    public final FluidTank inputTank3 = new FluidTank(4_000);
 
     /** Output tank: target solution, max 8 000 mB. */
     public final FluidTank outputTank = new FluidTank(8_000);
+
+    /**
+     * Combined handler for both input tanks — exposed on all horizontal faces.
+     * Routes each fluid to the tank already holding that type; falls back to tank1 first.
+     */
+    public final IFluidHandler inputHandler = new IFluidHandler() {
+        @Override public int getTanks() { return 2; }
+
+        @Override
+        public FluidStack getFluidInTank(int tank) {
+            return tank == 0 ? inputTank1.getFluid() : inputTank2.getFluid();
+        }
+
+        @Override
+        public int getTankCapacity(int tank) {
+            return tank == 0 ? inputTank1.getCapacity() : inputTank2.getCapacity();
+        }
+
+        @Override
+        public boolean isFluidValid(int tank, FluidStack stack) { return true; }
+
+        @Override
+        public int fill(FluidStack resource, FluidAction action) {
+            // Prefer the tank already holding this fluid type
+            if (!inputTank1.isEmpty() && inputTank1.getFluid().getFluid() == resource.getFluid()) {
+                return inputTank1.fill(resource, action);
+            }
+            if (!inputTank2.isEmpty() && inputTank2.getFluid().getFluid() == resource.getFluid()) {
+                return inputTank2.fill(resource, action);
+            }
+            // Both empty or neither matches — fill tank1, overflow to tank2
+            int filled = inputTank1.fill(resource, action);
+            if (filled < resource.getAmount()) {
+                FluidStack remaining = new FluidStack(resource.getFluid(), resource.getAmount() - filled);
+                filled += inputTank2.fill(remaining, action);
+            }
+            return filled;
+        }
+
+        @Override
+        public FluidStack drain(FluidStack resource, FluidAction action) { return FluidStack.EMPTY; }
+
+        @Override
+        public FluidStack drain(int maxDrain, FluidAction action) { return FluidStack.EMPTY; }
+    };
 
     /** Ticks remaining before the next processing attempt. */
     private int cooldown = 0;
@@ -54,30 +94,36 @@ public class MixerBlockEntity extends KineticBlockEntity {
     }
 
     private void tryProcess() {
-        MixerRecipe.Input input = new MixerRecipe.Input(
-                inputTank1.getFluid(), inputTank2.getFluid(), inputTank3.getFluid());
+        for (RecipeHolder<MixerRecipe> holder : level.getRecipeManager()
+                .getAllRecipesFor(HydroponiCraftRegistry.MIXING_RECIPE_TYPE.get())) {
+            MixerRecipe recipe = holder.value();
 
-        Optional<RecipeHolder<MixerRecipe>> match = level.getRecipeManager()
-                .getRecipeFor(HydroponiCraftRegistry.MIXING_RECIPE_TYPE.get(), input, level);
-        if (match.isEmpty()) return;
+            FluidStack output = recipe.output().toFluidStack();
+            if (output.isEmpty()) continue;
+            if (outputTank.fill(output, IFluidHandler.FluidAction.SIMULATE) < output.getAmount()) continue;
 
-        MixerRecipe recipe = match.get().value();
-        FluidStack output = recipe.output().toFluidStack();
+            // Check both tank orderings so pipe connection direction doesn't matter
+            boolean normalOrder  = recipe.input1().matches(inputTank1.getFluid())
+                                && recipe.input2().matches(inputTank2.getFluid());
+            boolean swappedOrder = !normalOrder
+                                && recipe.input1().matches(inputTank2.getFluid())
+                                && recipe.input2().matches(inputTank1.getFluid());
 
-        if (output.isEmpty()) return;
-        if (outputTank.fill(output, IFluidHandler.FluidAction.SIMULATE) < output.getAmount()) return;
+            if (!normalOrder && !swappedOrder) continue;
 
-        // Consume inputs
-        inputTank1.drain(recipe.input1().amount(), IFluidHandler.FluidAction.EXECUTE);
-        inputTank2.drain(recipe.input2().amount(), IFluidHandler.FluidAction.EXECUTE);
-        recipe.input3().ifPresent(in3 -> inputTank3.drain(in3.amount(), IFluidHandler.FluidAction.EXECUTE));
+            if (normalOrder) {
+                inputTank1.drain(recipe.input1().amount(), IFluidHandler.FluidAction.EXECUTE);
+                inputTank2.drain(recipe.input2().amount(), IFluidHandler.FluidAction.EXECUTE);
+            } else {
+                inputTank2.drain(recipe.input1().amount(), IFluidHandler.FluidAction.EXECUTE);
+                inputTank1.drain(recipe.input2().amount(), IFluidHandler.FluidAction.EXECUTE);
+            }
 
-        // Produce output
-        outputTank.fill(output, IFluidHandler.FluidAction.EXECUTE);
-        setChanged();
-
-        // Scale cooldown by RPM — base 20 ticks at 16 RPM
-        cooldown = Math.max(1, (int) (20.0 * 16.0 / Math.abs(getSpeed())));
+            outputTank.fill(output, IFluidHandler.FluidAction.EXECUTE);
+            setChanged();
+            cooldown = Math.max(1, (int) (20.0 * 16.0 / Math.abs(getSpeed())));
+            return;
+        }
     }
 
     // ------------------------------------------------------------------
@@ -89,7 +135,6 @@ public class MixerBlockEntity extends KineticBlockEntity {
         super.write(tag, registries, clientPacket);
         tag.put("InputTank1", inputTank1.writeToNBT(registries, new CompoundTag()));
         tag.put("InputTank2", inputTank2.writeToNBT(registries, new CompoundTag()));
-        tag.put("InputTank3", inputTank3.writeToNBT(registries, new CompoundTag()));
         tag.put("OutputTank", outputTank.writeToNBT(registries, new CompoundTag()));
         tag.putInt("Cooldown", cooldown);
     }
@@ -99,7 +144,6 @@ public class MixerBlockEntity extends KineticBlockEntity {
         super.read(tag, registries, clientPacket);
         inputTank1.readFromNBT(registries, tag.getCompound("InputTank1"));
         inputTank2.readFromNBT(registries, tag.getCompound("InputTank2"));
-        inputTank3.readFromNBT(registries, tag.getCompound("InputTank3"));
         outputTank.readFromNBT(registries, tag.getCompound("OutputTank"));
         cooldown = tag.getInt("Cooldown");
     }
