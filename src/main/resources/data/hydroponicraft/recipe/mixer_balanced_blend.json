@@ -1,0 +1,6 @@
+{
+  "type": "hydroponicraft:mixing",
+  "input1": { "fluid": "hydroponicraft:nutrient_fluid", "amount": 500 },
+  "input2": { "fluid": "hydroponicraft:yield_tonic", "amount": 500 },
+  "output": { "fluid": "hydroponicraft:balanced_blend", "amount": 1000 }
+}

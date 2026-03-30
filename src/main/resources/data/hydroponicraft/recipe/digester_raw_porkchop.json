@@ -1,0 +1,6 @@
+{
+  "type": "hydroponicraft:digesting",
+  "ingredient": { "item": "minecraft:raw_porkchop" },
+  "fluid_output_mb": 700,
+  "base_ticks": 240
+}

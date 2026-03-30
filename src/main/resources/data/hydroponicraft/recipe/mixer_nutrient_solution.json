@@ -1,0 +1,6 @@
+{
+  "type": "hydroponicraft:mixing",
+  "input1": { "fluid": "hydroponicraft:nutrient_fluid", "amount": 1000 },
+  "input2": { "fluid": "minecraft:water", "amount": 1000 },
+  "output": { "fluid": "hydroponicraft:nutrient_solution", "amount": 1000 }
+}

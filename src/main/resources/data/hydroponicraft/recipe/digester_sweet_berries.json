@@ -1,0 +1,6 @@
+{
+  "type": "hydroponicraft:digesting",
+  "ingredient": { "item": "minecraft:sweet_berries" },
+  "fluid_output_mb": 550,
+  "base_ticks": 200
+}

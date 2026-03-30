@@ -1,0 +1,6 @@
+{
+  "type": "hydroponicraft:digesting",
+  "ingredient": { "item": "minecraft:chorus_fruit" },
+  "fluid_output_mb": 2000,
+  "base_ticks": 400
+}

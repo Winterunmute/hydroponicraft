@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "CIC",
+    "IGI",
+    "CIC"
+  ],
+  "key": {
+    "C": { "item": "minecraft:copper_ingot" },
+    "I": { "item": "minecraft:iron_ingot" },
+    "G": { "item": "create:cogwheel" }
+  },
+  "result": {
+    "id": "hydroponicraft:digester",
+    "count": 1
+  }
+}

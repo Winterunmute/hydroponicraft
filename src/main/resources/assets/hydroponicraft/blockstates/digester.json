@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "facing=north": { "model": "hydroponicraft:block/digester" },
+    "facing=east":  { "model": "hydroponicraft:block/digester", "y": 90 },
+    "facing=south": { "model": "hydroponicraft:block/digester", "y": 180 },
+    "facing=west":  { "model": "hydroponicraft:block/digester", "y": 270 }
+  }
+}

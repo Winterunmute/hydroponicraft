@@ -1,0 +1,26 @@
+{
+  "block.hydroponicraft.digester":   "Digester",
+  "block.hydroponicraft.mixer":      "Mixer",
+  "block.hydroponicraft.growth_bed": "Growth Bed",
+  "item.hydroponicraft.digester":   "Digester",
+  "item.hydroponicraft.mixer":      "Mixer",
+  "item.hydroponicraft.growth_bed": "Growth Bed",
+
+  "item.hydroponicraft.nutrient_fluid_bucket":      "Nutrient Fluid Bucket",
+  "item.hydroponicraft.nutrient_solution_bucket":   "Nutrient Solution Bucket",
+  "item.hydroponicraft.enriched_solution_bucket":   "Enriched Solution Bucket",
+  "item.hydroponicraft.yield_tonic_bucket":         "Yield Tonic Bucket",
+  "item.hydroponicraft.accelerant_solution_bucket": "Accelerant Solution Bucket",
+  "item.hydroponicraft.balanced_blend_bucket":      "Balanced Blend Bucket",
+
+  "fluid.hydroponicraft.nutrient_fluid":      "Nutrient Fluid",
+  "fluid.hydroponicraft.nutrient_solution":   "Nutrient Solution",
+  "fluid.hydroponicraft.enriched_solution":   "Enriched Solution",
+  "fluid.hydroponicraft.yield_tonic":         "Yield Tonic",
+  "fluid.hydroponicraft.accelerant_solution": "Accelerant Solution",
+  "fluid.hydroponicraft.balanced_blend":      "Balanced Blend",
+
+  "container.hydroponicraft.digester": "Digester",
+
+  "itemGroup.hydroponicraft": "Hydroponicraft"
+}

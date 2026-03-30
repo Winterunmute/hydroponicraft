@@ -1,0 +1,6 @@
+{
+  "type": "hydroponicraft:digesting",
+  "ingredient": { "item": "minecraft:seagrass" },
+  "fluid_output_mb": 250,
+  "base_ticks": 150
+}

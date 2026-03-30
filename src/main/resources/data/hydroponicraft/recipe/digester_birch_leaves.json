@@ -1,0 +1,6 @@
+{
+  "type": "hydroponicraft:digesting",
+  "ingredient": { "item": "minecraft:birch_leaves" },
+  "fluid_output_mb": 300,
+  "base_ticks": 150
+}

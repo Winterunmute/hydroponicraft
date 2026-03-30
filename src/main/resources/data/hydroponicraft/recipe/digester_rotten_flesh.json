@@ -1,0 +1,6 @@
+{
+  "type": "hydroponicraft:digesting",
+  "ingredient": { "item": "minecraft:rotten_flesh" },
+  "fluid_output_mb": 800,
+  "base_ticks": 180
+}

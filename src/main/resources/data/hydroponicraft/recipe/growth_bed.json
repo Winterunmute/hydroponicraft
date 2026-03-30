@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "ISI",
+    "ICI",
+    "III"
+  ],
+  "key": {
+    "I": { "item": "minecraft:iron_ingot" },
+    "S": { "item": "minecraft:sand" },
+    "C": { "item": "minecraft:cobblestone" }
+  },
+  "result": {
+    "id": "hydroponicraft:growth_bed",
+    "count": 1
+  }
+}

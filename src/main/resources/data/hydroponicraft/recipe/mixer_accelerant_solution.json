@@ -1,0 +1,6 @@
+{
+  "type": "hydroponicraft:mixing",
+  "input1": { "fluid": "hydroponicraft:nutrient_fluid", "amount": 1500 },
+  "input2": { "fluid": "hydroponicraft:enriched_solution", "amount": 1000 },
+  "output": { "fluid": "hydroponicraft:accelerant_solution", "amount": 1000 }
+}
