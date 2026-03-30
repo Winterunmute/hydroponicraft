@@ -1,0 +1,25 @@
+{
+  "credit": "Made with Blockbench",
+  "textures": {
+    "0": "hydroponicraft:block/mixer_back",
+    "1": "hydroponicraft:block/mixer_bottom",
+    "2": "hydroponicraft:block/mixer_front",
+    "3": "hydroponicraft:block/mixer_side",
+    "4": "hydroponicraft:block/mixer_top",
+    "particle": "hydroponicraft:block/mixer_front"
+  },
+  "elements": [
+    {
+      "from": [0, 0, 0],
+      "to": [16, 16, 16],
+      "faces": {
+        "north": {"uv": [0, 0, 16, 16], "texture": "#0"},
+        "east":  {"uv": [0, 0, 16, 16], "texture": "#3"},
+        "south": {"uv": [0, 0, 16, 16], "texture": "#2"},
+        "west":  {"uv": [0, 0, 16, 16], "texture": "#3"},
+        "up":    {"uv": [0, 0, 16, 16], "texture": "#4"},
+        "down":  {"uv": [0, 0, 16, 16], "texture": "#1"}
+      }
+    }
+  ]
+}

@@ -1,0 +1,6 @@
+{
+  "type": "hydroponicraft:digesting",
+  "ingredient": { "item": "minecraft:kelp" },
+  "fluid_output_mb": 200,
+  "base_ticks": 150
+}

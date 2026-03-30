@@ -1,0 +1,6 @@
+{
+  "type": "hydroponicraft:digesting",
+  "ingredient": { "item": "minecraft:moss_block" },
+  "fluid_output_mb": 450,
+  "base_ticks": 200
+}

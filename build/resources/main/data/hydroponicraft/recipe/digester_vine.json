@@ -1,0 +1,6 @@
+{
+  "type": "hydroponicraft:digesting",
+  "ingredient": { "item": "minecraft:vine" },
+  "fluid_output_mb": 280,
+  "base_ticks": 150
+}

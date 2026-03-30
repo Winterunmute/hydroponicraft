@@ -1,0 +1,6 @@
+{
+  "type": "hydroponicraft:digesting",
+  "ingredient": { "item": "minecraft:wheat_seeds" },
+  "fluid_output_mb": 500,
+  "base_ticks": 200
+}

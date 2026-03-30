@@ -1,0 +1,6 @@
+{
+  "type": "hydroponicraft:digesting",
+  "ingredient": { "item": "minecraft:glow_berries" },
+  "fluid_output_mb": 750,
+  "base_ticks": 240
+}

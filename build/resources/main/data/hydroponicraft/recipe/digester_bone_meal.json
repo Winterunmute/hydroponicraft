@@ -1,0 +1,6 @@
+{
+  "type": "hydroponicraft:digesting",
+  "ingredient": { "item": "minecraft:bone_meal" },
+  "fluid_output_mb": 400,
+  "base_ticks": 200
+}

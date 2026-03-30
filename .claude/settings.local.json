@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(./gradlew.bat build:*)",
+      "Bash(cd /tmp)",
+      "Bash(jar xf:*)",
+      "Bash(javap -p com/simibubi/create/content/kinetics/base/KineticBlock.class)",
+      "Bash(JARPATH=\"C:/Users/Ricka/.gradle/caches/modules-2/files-2.1/com.simibubi.create/create-1.21.1/6.0.9-215/fb5df63dd9992d768cb2693d65bad74c3bab93c0/create-1.21.1-6.0.9-215-slim.jar\")",
+      "Bash(\"C:/Program Files/Java/jdk-22/bin/jar.exe\" xf \"$JARPATH\" \"com/simibubi/create/content/kinetics/base/KineticBlock.class\")",
+      "Bash(\"C:/Program Files/Java/jdk-22/bin/javap.exe\" -p \"com/simibubi/create/content/kinetics/base/KineticBlock.class\")",
+      "Bash(\"C:/Program Files/Java/jdk-22/bin/jar.exe\" tf \"C:/Users/Ricka/.gradle/caches/modules-2/files-2.1/com.simibubi.create/create-1.21.1/6.0.9-215/fb5df63dd9992d768cb2693d65bad74c3bab93c0/create-1.21.1-6.0.9-215-slim.jar\")",
+      "Bash(grep -v \"$\")",
+      "Bash(\"C:/Program Files/Java/jdk-22/bin/jar.exe\" xf \".gradle/caches/modules-2/files-2.1/com.simibubi.create/create-1.21.1/6.0.9-215/fb5df63dd9992d768cb2693d65bad74c3bab93c0/create-1.21.1-6.0.9-215-slim.jar\" \"com/simibubi/create/content/kinetics/millstone/MillstoneBlock.class\" \"com/simibubi/create/content/kinetics/base/HorizontalKineticBlock.class\")",
+      "Bash(\"C:/Program Files/Java/jdk-22/bin/javap.exe\" -p com/simibubi/create/content/kinetics/millstone/MillstoneBlock.class)",
+      "Bash(\"C:/Program Files/Java/jdk-22/bin/javap.exe\" -p com/simibubi/create/content/kinetics/base/HorizontalKineticBlock.class)",
+      "Bash(\"C:/Program Files/Java/jdk-22/bin/jar.exe\" xf \".gradle/caches/modules-2/files-2.1/com.simibubi.create/create-1.21.1/6.0.9-215/fb5df63dd9992d768cb2693d65bad74c3bab93c0/create-1.21.1-6.0.9-215-slim.jar\" \"com/simibubi/create/foundation/block/IBE.class\")",
+      "Bash(\"C:/Program Files/Java/jdk-22/bin/javap.exe\" -p com/simibubi/create/foundation/block/IBE.class)"
+    ]
+  }
+}

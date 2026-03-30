@@ -1,0 +1,6 @@
+{
+  "type": "hydroponicraft:digesting",
+  "ingredient": { "item": "minecraft:slime_ball" },
+  "fluid_output_mb": 900,
+  "base_ticks": 240
+}

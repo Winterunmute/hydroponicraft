@@ -1,0 +1,5 @@
+{
+  "variants": {
+    "": { "model": "hydroponicraft:block/growth_bed" }
+  }
+}
