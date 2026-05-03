@@ -335,3 +335,87 @@ Useful Prompt Patterns
 "Only touch files related to [class name] — don't change anything else"
 
 Hydroponicraft — Development Blueprint  |  NeoForge 1.21.1 + Create 6.0.9
+
+## Planned Future Machines
+
+### Chemical Synthesizer
+Converts an item + fluid into a new item using Create rotational power.
+
+Block Entity — ChemicalSynthesizerBlockEntity
+Extends KineticBlockEntity (Create)
+Item handler: 1 input slot, 1 output slot
+Fluid handler: 1 input tank
+Processing logic in tick():
+  Requires isSpeedRequirementFulfilled()
+  Processing speed scales with RPM
+  On completion: consumes input item + fluid, produces output item defined by recipe
+Persists inventory + fluid tank to NBT
+No GUI — hopper-fed input, hopper-drained output
+
+Recipe Type — ChemicalSynthesizerRecipe
+Input: 1 item + 1 fluid (amount specified per recipe)
+Output: 1 item
+Stored as JSON in data/hydroponicraft/recipe/
+
+First recipe:
+  Input item: minecraft:clay_ball
+  Input fluid: 1000 mB accelerant_solution
+  Output item: hydroponicraft:c4
+
+Same structural pattern as Digester (item in, fluid in, item out instead of fluid out).
+
+---
+
+### Explosion Quarry
+Teleports C4 charges downward to excavate ore, then teleports drops back up.
+Driven by Create rotational power.
+
+Block Entity — ExplosionQuarryBlockEntity
+Extends KineticBlockEntity (Create)
+Item handler:
+  1 Ender Pearl slot
+  1 C4 slot
+  Output buffer (multiple slots) drainable by hoppers
+  Filter slots: items matching filter are voided automatically (e.g. cobblestone, dirt)
+GUI: right-click opens depth configuration screen (range: 10–100 blocks)
+Per-cycle logic:
+  Requires isSpeedRequirementFulfilled()
+  RPM determines cycle speed (higher RPM = faster cycles)
+  Consumes X Ender Pearls + Y C4 per cycle
+  Teleports C4 to configured depth directly below the quarry
+  Detonates C4, captures all drops
+  Teleports drops back up into the output buffer
+  Items matching filter slots are discarded before entering buffer
+Persists inventory, filter, depth setting to NBT
+
+---
+
+### Monorail Seed System
+Automated seed delivery system for Growth Beds. Consists of three linked blocks.
+
+#### Rail Block
+Thin ceiling-mounted block (decorative + functional).
+Connects in straight lines and 90-degree curves.
+Launcher travels along the underside of connected Rail blocks.
+
+#### Charger/Loader Block
+Placed along the rail (ceiling-mounted, adjacent to Rail blocks).
+Connects to Create rotation via shaft.
+Has a seed slot fed by hopper from above.
+When a Seed Launcher docks:
+  Refills Launcher's seed capacity (up to 8 seeds)
+  Recharges Launcher's kinetic energy mechanically (RPM-dependent charge time)
+Persists seed inventory to NBT.
+
+#### Seed Launcher
+Entity that travels along the rail network.
+Capacity: 8 seeds.
+Speed: scales with RPM of the Charger that launched it.
+Behavior:
+  Travels along Rail blocks in the direction it was launched.
+  Detects Growth Beds directly below the rail as it passes.
+  Fires one seed downward when passing over a Growth Bed that needs replanting
+    (i.e. no crop detected above the bed).
+  Returns to its home Charger/Loader when seed capacity reaches 0.
+  Maximum one active Launcher per rail network.
+Replaces the Create Deployer workaround for Growth Bed replanting.

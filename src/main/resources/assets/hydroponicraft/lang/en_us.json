@@ -24,5 +24,47 @@
   "fluid_type.hydroponicraft.nether_wart_fluid":    "Nether Wart Fluid",
   "fluid_type.hydroponicraft.chorus_fruit_fluid":   "Chorus Fruit Fluid",
 
+  "item.hydroponicraft.remote_detonator": "Remote Detonator",
+
+  "block.hydroponicraft.chemical_synthesizer": "Chemical Synthesizer",
+  "item.hydroponicraft.chemical_synthesizer":  "Chemical Synthesizer",
+
+  "block.hydroponicraft.c4": "C4",
+  "item.hydroponicraft.c4":  "C4",
+
+  "block.hydroponicraft.colored_c4_white":      "White C4",
+  "block.hydroponicraft.colored_c4_orange":     "Orange C4",
+  "block.hydroponicraft.colored_c4_magenta":    "Magenta C4",
+  "block.hydroponicraft.colored_c4_light_blue": "Light Blue C4",
+  "block.hydroponicraft.colored_c4_yellow":     "Yellow C4",
+  "block.hydroponicraft.colored_c4_lime":       "Lime C4",
+  "block.hydroponicraft.colored_c4_pink":       "Pink C4",
+  "block.hydroponicraft.colored_c4_gray":       "Gray C4",
+  "block.hydroponicraft.colored_c4_light_gray": "Light Gray C4",
+  "block.hydroponicraft.colored_c4_cyan":       "Cyan C4",
+  "block.hydroponicraft.colored_c4_purple":     "Purple C4",
+  "block.hydroponicraft.colored_c4_blue":       "Blue C4",
+  "block.hydroponicraft.colored_c4_brown":      "Brown C4",
+  "block.hydroponicraft.colored_c4_green":      "Green C4",
+  "block.hydroponicraft.colored_c4_red":        "Red C4",
+  "block.hydroponicraft.colored_c4_black":      "Black C4",
+
+  "item.hydroponicraft.colored_c4_white":      "White C4",
+  "item.hydroponicraft.colored_c4_orange":     "Orange C4",
+  "item.hydroponicraft.colored_c4_magenta":    "Magenta C4",
+  "item.hydroponicraft.colored_c4_light_blue": "Light Blue C4",
+  "item.hydroponicraft.colored_c4_yellow":     "Yellow C4",
+  "item.hydroponicraft.colored_c4_lime":       "Lime C4",
+  "item.hydroponicraft.colored_c4_pink":       "Pink C4",
+  "item.hydroponicraft.colored_c4_gray":       "Gray C4",
+  "item.hydroponicraft.colored_c4_light_gray": "Light Gray C4",
+  "item.hydroponicraft.colored_c4_cyan":       "Cyan C4",
+  "item.hydroponicraft.colored_c4_purple":     "Purple C4",
+  "item.hydroponicraft.colored_c4_blue":       "Blue C4",
+  "item.hydroponicraft.colored_c4_brown":      "Brown C4",
+  "item.hydroponicraft.colored_c4_green":      "Green C4",
+  "item.hydroponicraft.colored_c4_red":        "Red C4",
+  "item.hydroponicraft.colored_c4_black":      "Black C4",
+
   "itemGroup.hydroponicraft": "Hydroponicraft"
 }

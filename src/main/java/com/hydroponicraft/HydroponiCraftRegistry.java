@@ -1,11 +1,17 @@
 package com.hydroponicraft;
 
+import com.hydroponicraft.block.C4Block;
+import com.hydroponicraft.item.RemoteDetonator;
+import com.hydroponicraft.block.ChemicalSynthesizerBlock;
 import com.hydroponicraft.block.DigesterBlock;
 import com.hydroponicraft.block.GrowthBedBlock;
 import com.hydroponicraft.block.MixerBlock;
+import com.hydroponicraft.blockentity.ChemicalSynthesizerBlockEntity;
 import com.hydroponicraft.blockentity.DigesterBlockEntity;
 import com.hydroponicraft.blockentity.GrowthBedBlockEntity;
 import com.hydroponicraft.blockentity.MixerBlockEntity;
+import com.hydroponicraft.recipe.ChemicalSynthesizerRecipe;
+import com.hydroponicraft.recipe.ChemicalSynthesizerRecipeSerializer;
 import com.hydroponicraft.recipe.DigesterRecipe;
 import com.hydroponicraft.recipe.DigesterRecipeSerializer;
 import com.hydroponicraft.recipe.MixerRecipe;
@@ -14,8 +20,11 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import java.util.EnumMap;
+import java.util.Map;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.Block;
@@ -57,6 +66,59 @@ public class HydroponiCraftRegistry {
 
     public static final DeferredRegister<CreativeModeTab> CREATIVE_TABS =
             DeferredRegister.create(Registries.CREATIVE_MODE_TAB, HydroponiCraftMod.MOD_ID);
+
+    // -------------------------------------------------------------------------
+    // Chemical Synthesizer
+    // -------------------------------------------------------------------------
+
+    public static final DeferredHolder<Block, ChemicalSynthesizerBlock> CHEMICAL_SYNTHESIZER_BLOCK =
+            BLOCKS.register("chemical_synthesizer", () -> new ChemicalSynthesizerBlock(
+                    BlockBehaviour.Properties.of().requiresCorrectToolForDrops().strength(3.5f)));
+
+    public static final DeferredHolder<Item, BlockItem> CHEMICAL_SYNTHESIZER_ITEM =
+            ITEMS.register("chemical_synthesizer", () -> new BlockItem(CHEMICAL_SYNTHESIZER_BLOCK.get(), new Item.Properties()));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ChemicalSynthesizerBlockEntity>> CHEMICAL_SYNTHESIZER_BE =
+            BLOCK_ENTITIES.register("chemical_synthesizer", () -> BlockEntityType.Builder
+                    .of(ChemicalSynthesizerBlockEntity::new, CHEMICAL_SYNTHESIZER_BLOCK.get())
+                    .build(null));
+
+    // -------------------------------------------------------------------------
+    // Remote Detonator
+    // -------------------------------------------------------------------------
+
+    public static final DeferredHolder<Item, RemoteDetonator> REMOTE_DETONATOR =
+            ITEMS.register("remote_detonator", () -> new RemoteDetonator(new Item.Properties().stacksTo(1)));
+
+    // -------------------------------------------------------------------------
+    // C4 block + item
+    // -------------------------------------------------------------------------
+
+    public static final DeferredHolder<Block, C4Block> C4_BLOCK =
+            BLOCKS.register("c4", () -> new C4Block(
+                    BlockBehaviour.Properties.of().strength(0.5f).noOcclusion()));
+
+    public static final DeferredHolder<Item, BlockItem> C4_ITEM =
+            ITEMS.register("c4", () -> new BlockItem(C4_BLOCK.get(), new Item.Properties()));
+
+    // -------------------------------------------------------------------------
+    // Colored C4 variants (16 dye colors — functionally identical to base C4)
+    // -------------------------------------------------------------------------
+
+    public static final Map<DyeColor, DeferredHolder<Block, C4Block>>    COLORED_C4_BLOCKS = new EnumMap<>(DyeColor.class);
+    public static final Map<DyeColor, DeferredHolder<Item, BlockItem>>   COLORED_C4_ITEMS  = new EnumMap<>(DyeColor.class);
+
+    static {
+        for (DyeColor color : DyeColor.values()) {
+            String id = "colored_c4_" + color.getName();
+            DeferredHolder<Block, C4Block> bh = BLOCKS.register(id,
+                    () -> new C4Block(BlockBehaviour.Properties.of().strength(0.5f).noOcclusion()));
+            DeferredHolder<Item, BlockItem> ih = ITEMS.register(id,
+                    () -> new BlockItem(bh.get(), new Item.Properties()));
+            COLORED_C4_BLOCKS.put(color, bh);
+            COLORED_C4_ITEMS.put(color, ih);
+        }
+    }
 
     // -------------------------------------------------------------------------
     // Digester
@@ -127,6 +189,15 @@ public class HydroponiCraftRegistry {
 
     public static final DeferredHolder<RecipeSerializer<?>, MixerRecipeSerializer> MIXING_SERIALIZER =
             RECIPE_SERIALIZERS.register("mixing", MixerRecipeSerializer::new);
+
+    public static final DeferredHolder<RecipeType<?>, RecipeType<ChemicalSynthesizerRecipe>> SYNTHESIZING_RECIPE_TYPE =
+            RECIPE_TYPES.register("synthesizing", () -> new RecipeType<ChemicalSynthesizerRecipe>() {
+                @Override
+                public String toString() { return HydroponiCraftMod.MOD_ID + ":synthesizing"; }
+            });
+
+    public static final DeferredHolder<RecipeSerializer<?>, ChemicalSynthesizerRecipeSerializer> SYNTHESIZING_SERIALIZER =
+            RECIPE_SERIALIZERS.register("synthesizing", ChemicalSynthesizerRecipeSerializer::new);
 
     // -------------------------------------------------------------------------
     // Creative tab

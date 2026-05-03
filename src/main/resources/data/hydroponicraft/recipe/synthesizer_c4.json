@@ -1,0 +1,9 @@
+{
+  "type": "hydroponicraft:synthesizing",
+  "ingredient": { "item": "minecraft:clay_ball" },
+  "fluid": "hydroponicraft:accelerant_solution",
+  "fluid_amount_mb": 500,
+  "result_item": "hydroponicraft:c4",
+  "result_count": 1,
+  "base_ticks": 200
+}

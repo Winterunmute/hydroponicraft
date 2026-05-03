@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "facing=north": { "model": "hydroponicraft:block/chemical_synthesizer" },
+    "facing=east":  { "model": "hydroponicraft:block/chemical_synthesizer", "y": 90 },
+    "facing=south": { "model": "hydroponicraft:block/chemical_synthesizer", "y": 180 },
+    "facing=west":  { "model": "hydroponicraft:block/chemical_synthesizer", "y": 270 }
+  }
+}

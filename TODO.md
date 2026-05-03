@@ -143,6 +143,37 @@ Full loop to test:
 
 ---
 
+## Future Machines (not yet started)
+
+### Chemical Synthesizer
+- Input: 1 item slot + 1 fluid tank → Output: 1 item slot
+- Driven by Create rotation (KineticBlockEntity)
+- Recipe-based (JSON): item + fluid → item
+- First recipe: Clay Ball + 1000 mB Accelerant Solution → C4
+- Same structural pattern as Digester but with fluid input instead of fluid output
+- No GUI — hopper-fed input, hopper-drained output
+
+### Explosion Quarry
+- Driven by Create rotation
+- Input slots: Ender Pearls + C4 (separate slots)
+- Configurable depth via right-click GUI (range: 10–100 blocks)
+- Teleports C4 downward, detonates, teleports drops back up into output buffer
+- Output buffer drainable by hoppers
+- Filter slots: items matching filter are voided automatically (e.g. cobblestone, dirt)
+- Consumption: X Ender Pearls + Y C4 per explosion cycle
+- RPM affects cycle speed
+
+### Monorail Seed System
+Three linked blocks working together:
+- **Rail Block**: thin ceiling-mounted block, connects in straight lines and 90° curves
+- **Charger/Loader Block**: placed along rail, connects to Create rotation, has seed slot fed
+  by hopper, charges Launcher mechanically + refills seeds when Launcher docks
+- **Seed Launcher**: entity that travels along rail, capacity 8 seeds, RPM-based speed,
+  detects Growth Beds below needing replanting, fires seed down when passing,
+  returns to Charger when empty, max 1 active Launcher per rail network
+
+---
+
 ## 📝 Notes
 
 - All fluids use water sprites with color tints — no extra texture work needed

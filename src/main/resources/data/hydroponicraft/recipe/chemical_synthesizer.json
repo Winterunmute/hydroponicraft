@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "IGI",
+    "CPC",
+    "CWC"
+  ],
+  "key": {
+    "I": { "item": "minecraft:iron_block" },
+    "G": { "item": "minecraft:glass" },
+    "C": { "item": "minecraft:copper_ingot" },
+    "P": { "item": "minecraft:piston" },
+    "W": { "item": "create:cogwheel" }
+  },
+  "result": {
+    "id": "hydroponicraft:chemical_synthesizer",
+    "count": 1
+  }
+}

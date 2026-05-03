@@ -1,5 +1,6 @@
 package com.hydroponicraft;
 
+import com.hydroponicraft.block.ChemicalSynthesizerBlock;
 import com.hydroponicraft.block.DigesterBlock;
 import net.minecraft.core.Direction;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
@@ -55,6 +56,28 @@ public class HydroponiCraftMod {
                 Capabilities.FluidHandler.BLOCK,
                 HydroponiCraftRegistry.GROWTH_BED_BE.get(),
                 (be, side) -> side == Direction.UP ? null : be.fluidTank);
+
+        // Chemical Synthesizer: item input on top (slot 0), item output on bottom (slot 1)
+        event.registerBlockEntity(
+                Capabilities.ItemHandler.BLOCK,
+                HydroponiCraftRegistry.CHEMICAL_SYNTHESIZER_BE.get(),
+                (be, side) -> {
+                    if (side == null) return be.itemHandler;
+                    if (side == Direction.UP)   return be.inputSlotWrapper;
+                    if (side == Direction.DOWN) return be.outputSlotWrapper;
+                    return null;
+                });
+
+        // Chemical Synthesizer: fluid tank on all horizontal sides except shaft face
+        event.registerBlockEntity(
+                Capabilities.FluidHandler.BLOCK,
+                HydroponiCraftRegistry.CHEMICAL_SYNTHESIZER_BE.get(),
+                (be, side) -> {
+                    if (side == null || side == Direction.UP || side == Direction.DOWN) return null;
+                    Direction facing = be.getBlockState().getValue(ChemicalSynthesizerBlock.FACING);
+                    if (side == facing.getClockWise()) return null;
+                    return be.fluidTank;
+                });
     }
 
     private static void buildCreativeTab(BuildCreativeModeTabContentsEvent event) {
@@ -64,6 +87,16 @@ public class HydroponiCraftMod {
         event.accept(HydroponiCraftRegistry.DIGESTER_ITEM.get());
         event.accept(HydroponiCraftRegistry.MIXER_ITEM.get());
         event.accept(HydroponiCraftRegistry.GROWTH_BED_ITEM.get());
+        event.accept(HydroponiCraftRegistry.CHEMICAL_SYNTHESIZER_ITEM.get());
+
+        // Tools
+        event.accept(HydroponiCraftRegistry.REMOTE_DETONATOR.get());
+
+        // C4 and colored variants
+        event.accept(HydroponiCraftRegistry.C4_ITEM.get());
+        for (var holder : HydroponiCraftRegistry.COLORED_C4_ITEMS.values()) {
+            event.accept(holder.get());
+        }
 
         // Fluid buckets
         event.accept(HydroponiCraftFluids.NUTRIENT_FLUID_BUCKET.get());
