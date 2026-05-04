@@ -1,6 +1,7 @@
 package com.hydroponicraft;
 
 import com.hydroponicraft.block.C4Block;
+import com.hydroponicraft.blockentity.C4BlockEntity;
 import com.hydroponicraft.item.RemoteDetonator;
 import com.hydroponicraft.block.ChemicalSynthesizerBlock;
 import com.hydroponicraft.block.DigesterBlock;
@@ -119,6 +120,19 @@ public class HydroponiCraftRegistry {
             COLORED_C4_ITEMS.put(color, ih);
         }
     }
+
+    // C4 BlockEntityType — covers base C4 and all 16 colored variants.
+    // Declared after the static block above so COLORED_C4_BLOCKS is populated before the lambda runs.
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<C4BlockEntity>> C4_BE =
+            BLOCK_ENTITIES.register("c4", () -> {
+                C4Block[] blocks = new C4Block[1 + DyeColor.values().length];
+                blocks[0] = C4_BLOCK.get();
+                int i = 1;
+                for (DyeColor color : DyeColor.values()) {
+                    blocks[i++] = COLORED_C4_BLOCKS.get(color).get();
+                }
+                return BlockEntityType.Builder.of(C4BlockEntity::new, blocks).build(null);
+            });
 
     // -------------------------------------------------------------------------
     // Digester

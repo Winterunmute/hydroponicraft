@@ -8,6 +8,7 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
+import net.neoforged.neoforge.common.NeoForge;
 
 @Mod(HydroponiCraftMod.MOD_ID)
 public class HydroponiCraftMod {
@@ -19,6 +20,7 @@ public class HydroponiCraftMod {
         HydroponiCraftRegistry.register(modEventBus);
         modEventBus.addListener(HydroponiCraftMod::registerCapabilities);
         modEventBus.addListener(HydroponiCraftMod::buildCreativeTab);
+        NeoForge.EVENT_BUS.addListener(ExplosionQueue::onLevelTick);
     }
 
     private static void registerCapabilities(RegisterCapabilitiesEvent event) {

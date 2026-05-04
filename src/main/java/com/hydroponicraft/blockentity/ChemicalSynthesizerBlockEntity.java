@@ -5,7 +5,11 @@ import com.hydroponicraft.recipe.ChemicalSynthesizerRecipe;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.block.state.BlockState;
@@ -60,6 +64,18 @@ public class ChemicalSynthesizerBlockEntity extends KineticBlockEntity {
             return;
         }
         processRecipe();
+        if (processingTicks > 0 && level instanceof ServerLevel sl) {
+            double cx = worldPosition.getX() + 0.5;
+            double cy = worldPosition.getY() + 1.0;
+            double cz = worldPosition.getZ() + 0.5;
+            if (processingTicks % 4 == 0) {
+                sl.sendParticles(ParticleTypes.SMOKE, cx, cy, cz, 3, 0.2, 0.1, 0.2, 0.01);
+                sl.sendParticles(ParticleTypes.SMALL_FLAME, cx, cy, cz, 2, 0.15, 0.05, 0.15, 0.0);
+            }
+            if (processingTicks % 20 == 0)
+                level.playSound(null, worldPosition, SoundEvents.FURNACE_FIRE_CRACKLE,
+                        SoundSource.BLOCKS, 0.5f, 1.0f);
+        }
     }
 
     private void processRecipe() {
@@ -109,6 +125,14 @@ public class ChemicalSynthesizerBlockEntity extends KineticBlockEntity {
             itemHandler.extractItem(0, 1, false);
             fluidTank.drain(recipe.fluidAmountMb(), IFluidHandler.FluidAction.EXECUTE);
             itemHandler.insertItem(1, result, false);
+            if (level instanceof ServerLevel sl) {
+                double cx = worldPosition.getX() + 0.5;
+                double cy = worldPosition.getY() + 1.0;
+                double cz = worldPosition.getZ() + 0.5;
+                sl.sendParticles(ParticleTypes.FLASH, cx, cy, cz, 1, 0.0, 0.0, 0.0, 0.0);
+            }
+            level.playSound(null, worldPosition, SoundEvents.BREWING_STAND_BREW,
+                    SoundSource.BLOCKS, 0.7f, 1.0f);
             setChanged();
         }
     }

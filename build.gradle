@@ -53,6 +53,14 @@ dependencies {
     runtimeOnly "dev.engine-room.flywheel:flywheel-neoforge-1.21.1:${flywheel_version}"
 }
 
+tasks.register('copyToMods', Copy) {
+    dependsOn jar
+    from jar.archiveFile
+    into output_dir
+}
+
+build.dependsOn copyToMods
+
 tasks.named('jar', Jar).configure {
     manifest {
         attributes([

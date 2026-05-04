@@ -5,9 +5,12 @@ import com.hydroponicraft.HydroponiCraftRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantments;
@@ -85,6 +88,9 @@ public class GrowthBedBlockEntity extends BlockEntity {
 
         int nextAge = Math.min(crop.getAge(cropState) + 1, crop.getMaxAge());
         serverLevel.setBlock(cropPos, crop.getStateForAge(nextAge), 2);
+        serverLevel.sendParticles(ParticleTypes.COMPOSTER,
+                cropPos.getX() + 0.5, cropPos.getY() + 0.5, cropPos.getZ() + 0.5,
+                3, 0.4, 0.2, 0.4, 0.0);
 
         // Harvest immediately if the single advance pushed the crop to max age
         BlockState advanced = level.getBlockState(cropPos);
@@ -95,6 +101,11 @@ public class GrowthBedBlockEntity extends BlockEntity {
 
     private void harvestCrop(ServerLevel level, BlockPos cropPos, BlockState cropState,
                               GrowthModifier modifier) {
+        level.sendParticles(ParticleTypes.HAPPY_VILLAGER,
+                cropPos.getX() + 0.5, cropPos.getY() + 0.5, cropPos.getZ() + 0.5,
+                8, 0.5, 0.3, 0.5, 0.0);
+        level.playSound(null, cropPos, SoundEvents.ITEM_PICKUP, SoundSource.BLOCKS, 0.6f, 1.0f);
+
         // Build a fortune-enchanted tool if the solution provides a fortune bonus
         ItemStack tool = new ItemStack(Items.DIAMOND_HOE);
         if (modifier.fortuneLevel() > 0) {

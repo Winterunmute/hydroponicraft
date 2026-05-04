@@ -5,7 +5,11 @@ import com.hydroponicraft.recipe.MixerRecipe;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.fluids.FluidStack;
@@ -87,6 +91,16 @@ public class MixerBlockEntity extends KineticBlockEntity {
 
         if (cooldown > 0) {
             cooldown--;
+            if (level instanceof ServerLevel sl) {
+                double cx = worldPosition.getX() + 0.5;
+                double cy = worldPosition.getY() + 1.0;
+                double cz = worldPosition.getZ() + 0.5;
+                if (cooldown % 4 == 0)
+                    sl.sendParticles(ParticleTypes.SPLASH, cx, cy, cz, 6, 0.4, 0.1, 0.4, 0.1);
+                if (cooldown % 20 == 0)
+                    level.playSound(null, worldPosition, SoundEvents.BUCKET_FILL,
+                            SoundSource.BLOCKS, 0.3f, 1.2f);
+            }
             return;
         }
 

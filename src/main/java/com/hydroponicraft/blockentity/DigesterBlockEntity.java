@@ -6,6 +6,10 @@ import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.SingleRecipeInput;
@@ -46,6 +50,16 @@ public class DigesterBlockEntity extends KineticBlockEntity {
             return;
         }
         processRecipe();
+        if (processingTicks > 0 && level instanceof ServerLevel sl) {
+            double cx = worldPosition.getX() + 0.5;
+            double cy = worldPosition.getY() + 1.0;
+            double cz = worldPosition.getZ() + 0.5;
+            if (processingTicks % 4 == 0)
+                sl.sendParticles(ParticleTypes.BUBBLE, cx, cy, cz, 4, 0.3, 0.1, 0.3, 0.0);
+            if (processingTicks % 20 == 0)
+                level.playSound(null, worldPosition, SoundEvents.BUBBLE_COLUMN_BUBBLE_POP,
+                        SoundSource.BLOCKS, 0.4f, 0.9f + level.random.nextFloat() * 0.2f);
+        }
     }
 
     private void processRecipe() {
