@@ -1,0 +1,8 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    { "item": "hydroponicraft:ender_c4" },
+    { "item": "minecraft:brown_dye" }
+  ],
+  "result": { "id": "hydroponicraft:colored_ender_c4_brown", "count": 1 }
+}

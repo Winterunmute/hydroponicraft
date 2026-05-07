@@ -29,6 +29,7 @@ public class HydroponiCraftFluids {
     public static BaseFlowingFluid.Properties BALANCED_BLEND_PROPS;
     public static BaseFlowingFluid.Properties NETHER_WART_FLUID_PROPS;
     public static BaseFlowingFluid.Properties CHORUS_FRUIT_FLUID_PROPS;
+    public static BaseFlowingFluid.Properties ENDER_PEARL_FLUID_PROPS;
 
     // -------------------------------------------------------------------------
     // Nutrient Fluid  (raw Digester output — earthy green)
@@ -223,6 +224,30 @@ public class HydroponiCraftFluids {
                     () -> new BucketItem(CHORUS_FRUIT_FLUID.get(), bucketProps()));
 
     // -------------------------------------------------------------------------
+    // Ender Pearl Fluid  (Digester output from ender pearl — dark teal)
+    // -------------------------------------------------------------------------
+
+    public static final DeferredHolder<FluidType, FluidType> ENDER_PEARL_FLUID_TYPE =
+            HydroponiCraftRegistry.FLUID_TYPES.register("ender_pearl_fluid",
+                    () -> makeType(0xFF2D8B57));
+
+    public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> ENDER_PEARL_FLUID =
+            HydroponiCraftRegistry.FLUIDS.register("ender_pearl_fluid",
+                    () -> new BaseFlowingFluid.Source(ENDER_PEARL_FLUID_PROPS));
+
+    public static final DeferredHolder<Fluid, BaseFlowingFluid.Flowing> ENDER_PEARL_FLUID_FLOWING =
+            HydroponiCraftRegistry.FLUIDS.register("ender_pearl_fluid_flowing",
+                    () -> new BaseFlowingFluid.Flowing(ENDER_PEARL_FLUID_PROPS));
+
+    public static final DeferredHolder<net.minecraft.world.level.block.Block, LiquidBlock> ENDER_PEARL_FLUID_BLOCK =
+            HydroponiCraftRegistry.BLOCKS.register("ender_pearl_fluid",
+                    () -> new LiquidBlock(ENDER_PEARL_FLUID.get(), fluidBlockProps()));
+
+    public static final DeferredHolder<Item, BucketItem> ENDER_PEARL_FLUID_BUCKET =
+            HydroponiCraftRegistry.ITEMS.register("ender_pearl_fluid_bucket",
+                    () -> new BucketItem(ENDER_PEARL_FLUID.get(), bucketProps()));
+
+    // -------------------------------------------------------------------------
     // Static initialiser — assign all Properties now that every holder exists
     // -------------------------------------------------------------------------
 
@@ -258,6 +283,10 @@ public class HydroponiCraftFluids {
         CHORUS_FRUIT_FLUID_PROPS = new BaseFlowingFluid.Properties(
                 CHORUS_FRUIT_FLUID_TYPE::get, CHORUS_FRUIT_FLUID::get, CHORUS_FRUIT_FLUID_FLOWING::get)
                 .bucket(CHORUS_FRUIT_FLUID_BUCKET::get).block(CHORUS_FRUIT_FLUID_BLOCK::get);
+
+        ENDER_PEARL_FLUID_PROPS = new BaseFlowingFluid.Properties(
+                ENDER_PEARL_FLUID_TYPE::get, ENDER_PEARL_FLUID::get, ENDER_PEARL_FLUID_FLOWING::get)
+                .bucket(ENDER_PEARL_FLUID_BUCKET::get).block(ENDER_PEARL_FLUID_BLOCK::get);
     }
 
     // -------------------------------------------------------------------------

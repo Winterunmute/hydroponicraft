@@ -2,7 +2,9 @@ package com.hydroponicraft.item;
 
 import com.hydroponicraft.HydroponiCraftRegistry;
 import com.hydroponicraft.block.C4Block;
+import com.hydroponicraft.block.EnderC4Block;
 import com.hydroponicraft.blockentity.C4BlockEntity;
+import com.hydroponicraft.blockentity.EnderC4BlockEntity;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
@@ -70,21 +72,38 @@ public class RemoteDetonator extends Item {
         Block baseC4 = HydroponiCraftRegistry.C4_BLOCK.get();
         var coloredHolder = HydroponiCraftRegistry.COLORED_C4_BLOCKS.get(color);
         Block coloredC4 = (coloredHolder != null) ? coloredHolder.get() : null;
-        UUID playerUUID = player.getUUID();
 
+        Block baseEnderC4 = HydroponiCraftRegistry.ENDER_C4_BLOCK.get();
+        var coloredEnderHolder = HydroponiCraftRegistry.COLORED_ENDER_C4_BLOCKS.get(color);
+        Block coloredEnderC4 = (coloredEnderHolder != null) ? coloredEnderHolder.get() : null;
+
+        UUID playerUUID = player.getUUID();
         List<BlockPos> result = new ArrayList<>();
-        // Snapshot to avoid ConcurrentModificationException if detonation removes entries.
+
+        // Regular C4 — tracked by C4BlockEntity.ACTIVE
         for (BlockPos pos : C4BlockEntity.getActivePositions(level)) {
             Block b = level.getBlockState(pos).getBlock();
             // Base C4 detonates regardless of color selection; colored must match.
             if (b != baseC4 && (coloredC4 == null || b != coloredC4)) continue;
-            // Ownership check — only detonate blocks placed by this player.
             BlockEntity be = level.getBlockEntity(pos);
             if (!(be instanceof C4BlockEntity c4be)) continue;
             UUID owner = c4be.getOwner();
             if (owner == null || !owner.equals(playerUUID)) continue;
             result.add(pos);
         }
+
+        // Ender C4 — tracked by EnderC4BlockEntity.ACTIVE (separate map from C4BlockEntity)
+        for (BlockPos pos : EnderC4BlockEntity.getActivePositions(level)) {
+            Block b = level.getBlockState(pos).getBlock();
+            // Same color logic: base ender C4 always matches; colored must match.
+            if (b != baseEnderC4 && (coloredEnderC4 == null || b != coloredEnderC4)) continue;
+            BlockEntity be = level.getBlockEntity(pos);
+            if (!(be instanceof EnderC4BlockEntity ec4be)) continue;
+            UUID owner = ec4be.getOwner();
+            if (owner == null || !owner.equals(playerUUID)) continue;
+            result.add(pos);
+        }
+
         return result;
     }
 
@@ -110,7 +129,13 @@ public class RemoteDetonator extends Item {
             player.displayClientMessage(
                     Component.literal("[Remote Detonator] Detonating " + targets.size() + " charges..."), true);
             for (BlockPos pos : targets) {
-                C4Block.detonate(level, pos);
+                // EnderC4Block extends C4Block — must check the subtype first
+                // so GatheringChestManager is notified for ender C4 detonations.
+                if (level.getBlockState(pos).getBlock() instanceof EnderC4Block) {
+                    EnderC4Block.detonate(level, pos);
+                } else {
+                    C4Block.detonate(level, pos);
+                }
             }
         }
     }

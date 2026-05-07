@@ -1,7 +1,15 @@
 package com.hydroponicraft;
 
 import com.hydroponicraft.block.C4Block;
+import com.hydroponicraft.block.EnderC4Block;
+import com.hydroponicraft.block.GatheringChestBlock;
+import com.hydroponicraft.block.RedstoneDetonatorBlock;
 import com.hydroponicraft.blockentity.C4BlockEntity;
+import com.hydroponicraft.blockentity.EnderC4BlockEntity;
+import com.hydroponicraft.blockentity.GatheringChestBlockEntity;
+import com.hydroponicraft.blockentity.RedstoneDetonatorBlockEntity;
+import com.hydroponicraft.entity.EnderPearlLauncherCart;
+import com.hydroponicraft.item.EnderPearlLauncherCartItem;
 import com.hydroponicraft.item.RemoteDetonator;
 import com.hydroponicraft.block.ChemicalSynthesizerBlock;
 import com.hydroponicraft.block.DigesterBlock;
@@ -18,6 +26,8 @@ import com.hydroponicraft.recipe.DigesterRecipeSerializer;
 import com.hydroponicraft.recipe.MixerRecipe;
 import com.hydroponicraft.recipe.MixerRecipeSerializer;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.MobCategory;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
@@ -67,6 +77,9 @@ public class HydroponiCraftRegistry {
 
     public static final DeferredRegister<CreativeModeTab> CREATIVE_TABS =
             DeferredRegister.create(Registries.CREATIVE_MODE_TAB, HydroponiCraftMod.MOD_ID);
+
+    public static final DeferredRegister<EntityType<?>> ENTITY_TYPES =
+            DeferredRegister.create(Registries.ENTITY_TYPE, HydroponiCraftMod.MOD_ID);
 
     // -------------------------------------------------------------------------
     // Chemical Synthesizer
@@ -133,6 +146,93 @@ public class HydroponiCraftRegistry {
                 }
                 return BlockEntityType.Builder.of(C4BlockEntity::new, blocks).build(null);
             });
+
+    // -------------------------------------------------------------------------
+    // Ender C4 block + item
+    // -------------------------------------------------------------------------
+
+    public static final DeferredHolder<Block, EnderC4Block> ENDER_C4_BLOCK =
+            BLOCKS.register("ender_c4", () -> new EnderC4Block(
+                    BlockBehaviour.Properties.of().strength(0.5f).noOcclusion(), null));
+
+    public static final DeferredHolder<Item, BlockItem> ENDER_C4_ITEM =
+            ITEMS.register("ender_c4", () -> new BlockItem(ENDER_C4_BLOCK.get(), new Item.Properties()));
+
+    // -------------------------------------------------------------------------
+    // Colored Ender C4 variants (16 dye colors)
+    // -------------------------------------------------------------------------
+
+    public static final Map<DyeColor, DeferredHolder<Block, EnderC4Block>> COLORED_ENDER_C4_BLOCKS = new EnumMap<>(DyeColor.class);
+    public static final Map<DyeColor, DeferredHolder<Item, BlockItem>>     COLORED_ENDER_C4_ITEMS  = new EnumMap<>(DyeColor.class);
+
+    static {
+        for (DyeColor color : DyeColor.values()) {
+            String id = "colored_ender_c4_" + color.getName();
+            final DyeColor finalColor = color;
+            DeferredHolder<Block, EnderC4Block> bh = BLOCKS.register(id,
+                    () -> new EnderC4Block(BlockBehaviour.Properties.of().strength(0.5f).noOcclusion(), finalColor));
+            DeferredHolder<Item, BlockItem> ih = ITEMS.register(id,
+                    () -> new BlockItem(bh.get(), new Item.Properties()));
+            COLORED_ENDER_C4_BLOCKS.put(color, bh);
+            COLORED_ENDER_C4_ITEMS.put(color, ih);
+        }
+    }
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<EnderC4BlockEntity>> ENDER_C4_BE =
+            BLOCK_ENTITIES.register("ender_c4", () -> {
+                EnderC4Block[] blocks = new EnderC4Block[1 + DyeColor.values().length];
+                blocks[0] = ENDER_C4_BLOCK.get();
+                int i = 1;
+                for (DyeColor color : DyeColor.values()) {
+                    blocks[i++] = COLORED_ENDER_C4_BLOCKS.get(color).get();
+                }
+                return BlockEntityType.Builder.of(EnderC4BlockEntity::new, blocks).build(null);
+            });
+
+    // -------------------------------------------------------------------------
+    // Gathering Chest
+    // -------------------------------------------------------------------------
+
+    public static final DeferredHolder<Block, GatheringChestBlock> GATHERING_CHEST_BLOCK =
+            BLOCKS.register("gathering_chest", () -> new GatheringChestBlock(
+                    BlockBehaviour.Properties.of().requiresCorrectToolForDrops().strength(3.5f)));
+
+    public static final DeferredHolder<Item, BlockItem> GATHERING_CHEST_ITEM =
+            ITEMS.register("gathering_chest", () -> new BlockItem(GATHERING_CHEST_BLOCK.get(), new Item.Properties()));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<GatheringChestBlockEntity>> GATHERING_CHEST_BE =
+            BLOCK_ENTITIES.register("gathering_chest", () -> BlockEntityType.Builder
+                    .of(GatheringChestBlockEntity::new, GATHERING_CHEST_BLOCK.get())
+                    .build(null));
+
+    // -------------------------------------------------------------------------
+    // Redstone Detonator
+    // -------------------------------------------------------------------------
+
+    public static final DeferredHolder<Block, RedstoneDetonatorBlock> REDSTONE_DETONATOR_BLOCK =
+            BLOCKS.register("redstone_detonator", () -> new RedstoneDetonatorBlock(
+                    BlockBehaviour.Properties.of().requiresCorrectToolForDrops().strength(3.5f)));
+
+    public static final DeferredHolder<Item, BlockItem> REDSTONE_DETONATOR_ITEM =
+            ITEMS.register("redstone_detonator", () -> new BlockItem(REDSTONE_DETONATOR_BLOCK.get(), new Item.Properties()));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<RedstoneDetonatorBlockEntity>> REDSTONE_DETONATOR_BE =
+            BLOCK_ENTITIES.register("redstone_detonator", () -> BlockEntityType.Builder
+                    .of(RedstoneDetonatorBlockEntity::new, REDSTONE_DETONATOR_BLOCK.get())
+                    .build(null));
+
+    // -------------------------------------------------------------------------
+    // Ender Pearl Launcher Cart entity + spawner item
+    // -------------------------------------------------------------------------
+
+    public static final DeferredHolder<EntityType<?>, EntityType<EnderPearlLauncherCart>> ENDER_PEARL_LAUNCHER_CART_TYPE =
+            ENTITY_TYPES.register("ender_pearl_launcher_cart", () ->
+                    EntityType.Builder.<EnderPearlLauncherCart>of(EnderPearlLauncherCart::new, MobCategory.MISC)
+                            .sized(0.98f, 0.7f)
+                            .build("ender_pearl_launcher_cart"));
+
+    public static final DeferredHolder<Item, EnderPearlLauncherCartItem> ENDER_PEARL_LAUNCHER_CART_ITEM =
+            ITEMS.register("ender_pearl_launcher_cart", () -> new EnderPearlLauncherCartItem(new Item.Properties().stacksTo(1)));
 
     // -------------------------------------------------------------------------
     // Digester
@@ -236,5 +336,6 @@ public class HydroponiCraftRegistry {
         RECIPE_TYPES.register(bus);
         RECIPE_SERIALIZERS.register(bus);
         CREATIVE_TABS.register(bus);
+        ENTITY_TYPES.register(bus);
     }
 }

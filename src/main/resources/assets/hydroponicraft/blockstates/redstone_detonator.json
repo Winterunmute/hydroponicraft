@@ -1,0 +1,5 @@
+{
+  "variants": {
+    "": { "model": "hydroponicraft:block/redstone_detonator" }
+  }
+}

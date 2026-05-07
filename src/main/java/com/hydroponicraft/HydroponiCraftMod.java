@@ -2,6 +2,7 @@ package com.hydroponicraft;
 
 import com.hydroponicraft.block.ChemicalSynthesizerBlock;
 import com.hydroponicraft.block.DigesterBlock;
+import com.hydroponicraft.client.ClientSetup;
 import net.minecraft.core.Direction;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.bus.api.IEventBus;
@@ -20,7 +21,9 @@ public class HydroponiCraftMod {
         HydroponiCraftRegistry.register(modEventBus);
         modEventBus.addListener(HydroponiCraftMod::registerCapabilities);
         modEventBus.addListener(HydroponiCraftMod::buildCreativeTab);
+        modEventBus.addListener(ClientSetup::registerRenderers);
         NeoForge.EVENT_BUS.addListener(ExplosionQueue::onLevelTick);
+        NeoForge.EVENT_BUS.addListener(GatheringChestManager::onServerTick);
     }
 
     private static void registerCapabilities(RegisterCapabilitiesEvent event) {
@@ -80,6 +83,12 @@ public class HydroponiCraftMod {
                     if (side == facing.getClockWise()) return null;
                     return be.fluidTank;
                 });
+
+        // Gathering Chest: IItemHandler on all sides
+        event.registerBlockEntity(
+                Capabilities.ItemHandler.BLOCK,
+                HydroponiCraftRegistry.GATHERING_CHEST_BE.get(),
+                (be, side) -> be.itemHandler);
     }
 
     private static void buildCreativeTab(BuildCreativeModeTabContentsEvent event) {
@@ -100,7 +109,21 @@ public class HydroponiCraftMod {
             event.accept(holder.get());
         }
 
+        // Gathering Chest + Redstone Detonator
+        event.accept(HydroponiCraftRegistry.GATHERING_CHEST_ITEM.get());
+        event.accept(HydroponiCraftRegistry.REDSTONE_DETONATOR_ITEM.get());
+
+        // Ender C4
+        event.accept(HydroponiCraftRegistry.ENDER_C4_ITEM.get());
+        for (var holder : HydroponiCraftRegistry.COLORED_ENDER_C4_ITEMS.values()) {
+            event.accept(holder.get());
+        }
+
+        // Launcher Cart
+        event.accept(HydroponiCraftRegistry.ENDER_PEARL_LAUNCHER_CART_ITEM.get());
+
         // Fluid buckets
+        event.accept(HydroponiCraftFluids.ENDER_PEARL_FLUID_BUCKET.get());
         event.accept(HydroponiCraftFluids.NUTRIENT_FLUID_BUCKET.get());
         event.accept(HydroponiCraftFluids.NUTRIENT_SOLUTION_BUCKET.get());
         event.accept(HydroponiCraftFluids.ENRICHED_SOLUTION_BUCKET.get());

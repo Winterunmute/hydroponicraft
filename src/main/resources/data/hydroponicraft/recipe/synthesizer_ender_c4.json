@@ -1,0 +1,9 @@
+{
+  "type": "hydroponicraft:synthesizing",
+  "ingredient": { "item": "hydroponicraft:c4" },
+  "fluid": "hydroponicraft:ender_pearl_fluid",
+  "fluid_amount_mb": 250,
+  "result_item": "hydroponicraft:ender_c4",
+  "result_count": 1,
+  "base_ticks": 200
+}

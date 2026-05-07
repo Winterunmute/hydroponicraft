@@ -1,0 +1,7 @@
+{
+  "type": "hydroponicraft:digesting",
+  "ingredient": { "item": "minecraft:ender_pearl" },
+  "fluid_output_mb": 1000,
+  "base_ticks": 400,
+  "output_fluid": "hydroponicraft:ender_pearl_fluid"
+}

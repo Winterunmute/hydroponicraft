@@ -14,6 +14,9 @@
   "item.hydroponicraft.balanced_blend_bucket":       "Balanced Blend Bucket",
   "item.hydroponicraft.nether_wart_fluid_bucket":    "Nether Wart Fluid Bucket",
   "item.hydroponicraft.chorus_fruit_fluid_bucket":   "Chorus Fruit Fluid Bucket",
+  "item.hydroponicraft.ender_pearl_fluid_bucket":   "Ender Pearl Fluid Bucket",
+
+  "fluid_type.hydroponicraft.ender_pearl_fluid":    "Ender Pearl Fluid",
 
   "fluid_type.hydroponicraft.nutrient_fluid":       "Nutrient Fluid",
   "fluid_type.hydroponicraft.nutrient_solution":    "Nutrient Solution",
@@ -65,6 +68,51 @@
   "item.hydroponicraft.colored_c4_green":      "Green C4",
   "item.hydroponicraft.colored_c4_red":        "Red C4",
   "item.hydroponicraft.colored_c4_black":      "Black C4",
+
+  "block.hydroponicraft.ender_c4": "Ender C4",
+  "item.hydroponicraft.ender_c4":  "Ender C4",
+
+  "block.hydroponicraft.colored_ender_c4_white":      "White Ender C4",
+  "block.hydroponicraft.colored_ender_c4_orange":     "Orange Ender C4",
+  "block.hydroponicraft.colored_ender_c4_magenta":    "Magenta Ender C4",
+  "block.hydroponicraft.colored_ender_c4_light_blue": "Light Blue Ender C4",
+  "block.hydroponicraft.colored_ender_c4_yellow":     "Yellow Ender C4",
+  "block.hydroponicraft.colored_ender_c4_lime":       "Lime Ender C4",
+  "block.hydroponicraft.colored_ender_c4_pink":       "Pink Ender C4",
+  "block.hydroponicraft.colored_ender_c4_gray":       "Gray Ender C4",
+  "block.hydroponicraft.colored_ender_c4_light_gray": "Light Gray Ender C4",
+  "block.hydroponicraft.colored_ender_c4_cyan":       "Cyan Ender C4",
+  "block.hydroponicraft.colored_ender_c4_purple":     "Purple Ender C4",
+  "block.hydroponicraft.colored_ender_c4_blue":       "Blue Ender C4",
+  "block.hydroponicraft.colored_ender_c4_brown":      "Brown Ender C4",
+  "block.hydroponicraft.colored_ender_c4_green":      "Green Ender C4",
+  "block.hydroponicraft.colored_ender_c4_red":        "Red Ender C4",
+  "block.hydroponicraft.colored_ender_c4_black":      "Black Ender C4",
+
+  "item.hydroponicraft.colored_ender_c4_white":      "White Ender C4",
+  "item.hydroponicraft.colored_ender_c4_orange":     "Orange Ender C4",
+  "item.hydroponicraft.colored_ender_c4_magenta":    "Magenta Ender C4",
+  "item.hydroponicraft.colored_ender_c4_light_blue": "Light Blue Ender C4",
+  "item.hydroponicraft.colored_ender_c4_yellow":     "Yellow Ender C4",
+  "item.hydroponicraft.colored_ender_c4_lime":       "Lime Ender C4",
+  "item.hydroponicraft.colored_ender_c4_pink":       "Pink Ender C4",
+  "item.hydroponicraft.colored_ender_c4_gray":       "Gray Ender C4",
+  "item.hydroponicraft.colored_ender_c4_light_gray": "Light Gray Ender C4",
+  "item.hydroponicraft.colored_ender_c4_cyan":       "Cyan Ender C4",
+  "item.hydroponicraft.colored_ender_c4_purple":     "Purple Ender C4",
+  "item.hydroponicraft.colored_ender_c4_blue":       "Blue Ender C4",
+  "item.hydroponicraft.colored_ender_c4_brown":      "Brown Ender C4",
+  "item.hydroponicraft.colored_ender_c4_green":      "Green Ender C4",
+  "item.hydroponicraft.colored_ender_c4_red":        "Red Ender C4",
+  "item.hydroponicraft.colored_ender_c4_black":      "Black Ender C4",
+
+  "block.hydroponicraft.gathering_chest": "Gathering Chest",
+  "item.hydroponicraft.gathering_chest":  "Gathering Chest",
+
+  "block.hydroponicraft.redstone_detonator": "Redstone Detonator",
+  "item.hydroponicraft.redstone_detonator":  "Redstone Detonator",
+
+  "item.hydroponicraft.ender_pearl_launcher_cart": "Ender Pearl Launcher Cart",
 
   "itemGroup.hydroponicraft": "Hydroponicraft"
 }

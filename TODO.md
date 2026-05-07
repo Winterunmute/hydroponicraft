@@ -20,75 +20,51 @@ Goal: get the mod to a state where it can be loaded, crafted, and played in surv
 - **Basic loop confirmed in game**: Digester → Create pipes → Growth Bed → crops grow and auto-harvest ✅
 - **Growth Bed outputs drops downward to hopper** via IItemHandler — confirmed working ✅
 - **Growth Bed does NOT auto-replant** — intentional design; player places a Create Deployer above to replant. Considered complete and correct. ✅
+- **Chemical Synthesizer** — fully implemented (KineticBlock, 2-slot item handler, fluid tank, recipe system, JSON recipes, crafting recipe, model/loot/lang) ✅
+- **C4 block** — placeable, 6 directions, owner UUID stored in BlockEntity, 5-stage explosion over 16 ticks (strength 10→11→12→11→10), detonated via Remote Detonator only ✅
+- **C4 colored variants** — 16 dye colors, each a separate block; dye recipe (shapeless) for each ✅
+- **Remote Detonator** — color cycling (shift+click), ownership check, scans all loaded chunks, crafting recipe, tooltip ✅
+- **Machine feedback** — particles and sounds added to all 4 machines: bubbles (Digester), splashes (Mixer), composter/happy-villager (Growth Bed), smoke+flame+flash (Chemical Synthesizer) ✅
+- **Auto-copy to mods folder** — `copyToMods` Gradle task deploys jar to PrismLauncher on every build ✅
 
 ---
 
 ## 🔲 Remaining
 
-### 🏃 Next session priorities
-
 #### 1. Balance fixes
 
-Fluid consumption and tick rate are currently too aggressive.
+Growth Bed tick rate and fluid consumption are too aggressive.
 
 ```
-- Reduce Growth Bed tick rate significantly (current rate burns through fluid too fast)
-- Reduce fluid consumption per growth tick drastically (currently 250 mB per tick)
+- Reduce Growth Bed BASE_INTERVAL (currently 100 ticks — too fast)
+- Reduce fluid consumption per growth tick (currently 25 mB — too frequent)
 ```
 
 #### 2. Digester redesign
 
-Remove the GUI entirely. The Digester should be a simple hopper-fed machine with no right-click UI.
+The current Digester still has a `useWithoutItem()` that ejects the input item on right-click.
+Remove it — the Digester should be a silent hopper-fed machine with zero player interaction.
 
 ```
-Rewrite DigesterBlock + DigesterBlockEntity:
-1. Remove GUI — right-click should NOT open any inventory screen
-2. Reduce to 1 input slot only (no output/byproduct slot)
-3. Input only via hopper or belt from the top — no manual slot access
-4. Shaft stays on model-west face (facing.getCounterClockWise()) — no change
-5. Fluid output stays on model-east face (facing.getClockWise()) — no change
-6. Remove DigesterMenu, DigesterScreen, MenuProvider wiring
-7. Clean up any extra slots in DigesterBlockEntity beyond the single input slot
-8. Remove debug log: LOGGER.info("Digester ticking, speed: " + getSpeed())
+- Remove useWithoutItem() from DigesterBlock
+- Verify shaft face and fluid output face match README docs
 ```
 
-#### 3. Polish
+#### 3. Missing Mixer recipes
+
+`nether_wart_fluid` and `chorus_fruit_fluid` are registered but their Mixer recipes are not.
 
 ```
-- Fix fluid display names: en_us.json currently shows raw keys like
-  "fluid_type.hydroponicraft.nutrient_fluid" in game. NeoForge 1.21.1 uses
-  "fluid_type.hydroponicraft.<id>" format — verify keys match exactly.
-- Fix creative tab not appearing in the creative menu (tab may be registered
-  but not showing up — check registration order or tab key)
-- Digester currently has more slots than needed — resolved by Digester redesign above
+Add recipe JSONs:
+- mixer_enriched_solution.json: 1000 mB nutrient_fluid + 500 mB nether_wart_fluid → enriched_solution
+- mixer_yield_tonic.json: 1000 mB nutrient_fluid + 500 mB chorus_fruit_fluid → yield_tonic
 ```
 
----
-
-### 💻 After next session
-
-#### 4. Mixer implementation and in-game testing
+#### 4. Polish
 
 ```
-- Test Mixer in game: connect shaft, fill input tanks via Create pipes, verify output
-- Add Enriched Solution + Yield Tonic recipes once nether_wart_fluid and
-  chorus_fruit_fluid are registered (see Deferred Mixer Recipes below)
-```
-
-#### 5. Register nether_wart_fluid + chorus_fruit_fluid
-
-```
-Register in HydroponiCraftFluids.java using the same BaseFlowingFluid pattern:
-- nether_wart_fluid: still, flowing, block, bucket
-- chorus_fruit_fluid: still, flowing, block, bucket
-
-Add Digester recipe JSONs:
-- nether_wart_fluid: input = minecraft:nether_wart, outputMb = 500, baseTicks = 200
-- chorus_fruit_fluid: input = minecraft:chorus_fruit, outputMb = 500, baseTicks = 250
-
-Then add Mixer recipe JSONs:
-- Enriched Solution: 1000 mB nutrient_fluid + 500 mB nether_wart_fluid → enriched_solution
-- Yield Tonic: 1000 mB nutrient_fluid + 500 mB chorus_fruit_fluid → yield_tonic
+- Verify fluid display names in-game (keys: fluid_type.hydroponicraft.<id>)
+- Verify creative tab appears in creative menu
 ```
 
 ---
@@ -104,24 +80,25 @@ Then add Mixer recipe JSONs:
 
 ## 🧪 Deferred Mixer Recipes
 
-| Solution | Status | Additive fluid needed |
-|----------|--------|-----------------------|
-| Enriched Solution | ❌ | `nether_wart_fluid` (not yet registered) |
-| Yield Tonic | ❌ | `chorus_fruit_fluid` (not yet registered) |
+| Solution | Status | Note |
+|----------|--------|------|
+| Enriched Solution | ❌ | `nether_wart_fluid` is registered; just needs recipe JSON |
+| Yield Tonic | ❌ | `chorus_fruit_fluid` is registered; just needs recipe JSON |
 
 ---
 
-## 🧱 Minimum to be survival playable
+## 🧱 Survival playable checklist
 
-1. ✅ All 11 code steps complete
+1. ✅ All blueprint code steps complete
 2. ✅ Digester + Mixer textures and models
 3. ✅ Crafting recipes for all machines
-4. ✅ Digester + Mixer shaft connections working
-5. ✅ Basic loop confirmed in game (Digester → pipes → Growth Bed → harvest → hopper)
-6. 🔲 Digester redesign (no GUI, 1 slot, shaft on east, output on west)
+4. ✅ Shaft connections working
+5. ✅ Basic loop confirmed in game
+6. ✅ Chemical Synthesizer + C4 + Remote Detonator
 7. 🔲 Balance (tick rate + fluid consumption)
-8. 🔲 Polish (fluid names, creative tab)
-9. 🔲 Growth Bed textures + model
+8. 🔲 Missing Mixer recipes (Enriched Solution, Yield Tonic)
+9. 🔲 Polish (fluid names, creative tab)
+10. 🔲 Growth Bed textures + model
 
 ---
 
@@ -133,25 +110,17 @@ Then add Mixer recipe JSONs:
 
 Full loop to test:
 1. Craft a Digester, Mixer, Growth Bed
-2. Connect a Create shaft + hand crank to the Digester's east face (after redesign)
-3. Drop rotten flesh into the Digester via hopper from above — it produces Nutrient Fluid
-4. Pipe Nutrient Fluid out the west face into Growth Bed (any face except top)
+2. Connect a Create shaft + hand crank to the Digester's shaft face
+3. Drop rotten flesh into the Digester via hopper from above — produces Nutrient Fluid
+4. Pipe Nutrient Fluid into Growth Bed (any face except top)
 5. Plant wheat on top of the Growth Bed
-6. Place a Create Deployer above the Growth Bed pointed down, loaded with wheat seeds, to replant after harvest
+6. Place a Create Deployer above pointed down, loaded with wheat seeds, to replant after harvest
 7. Place a hopper below the Growth Bed to collect drops
 8. Watch it grow, auto-harvest into the hopper, and get replanted by the Deployer
 
 ---
 
 ## Future Machines (not yet started)
-
-### Chemical Synthesizer
-- Input: 1 item slot + 1 fluid tank → Output: 1 item slot
-- Driven by Create rotation (KineticBlockEntity)
-- Recipe-based (JSON): item + fluid → item
-- First recipe: Clay Ball + 1000 mB Accelerant Solution → C4
-- Same structural pattern as Digester but with fluid input instead of fluid output
-- No GUI — hopper-fed input, hopper-drained output
 
 ### Explosion Quarry
 - Driven by Create rotation

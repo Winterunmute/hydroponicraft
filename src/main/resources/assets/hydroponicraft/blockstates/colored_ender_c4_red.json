@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "facing=up":    { "model": "hydroponicraft:block/ender_c4" },
+    "facing=down":  { "model": "hydroponicraft:block/ender_c4", "x": 180 },
+    "facing=north": { "model": "hydroponicraft:block/ender_c4", "x": 270 },
+    "facing=south": { "model": "hydroponicraft:block/ender_c4", "x": 90 },
+    "facing=east":  { "model": "hydroponicraft:block/ender_c4", "x": 270, "y": 90 },
+    "facing=west":  { "model": "hydroponicraft:block/ender_c4", "x": 270, "y": 270 }
+  }
+}

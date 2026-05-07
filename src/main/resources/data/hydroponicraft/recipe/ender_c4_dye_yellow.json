@@ -1,0 +1,8 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    { "item": "hydroponicraft:ender_c4" },
+    { "item": "minecraft:yellow_dye" }
+  ],
+  "result": { "id": "hydroponicraft:colored_ender_c4_yellow", "count": 1 }
+}
