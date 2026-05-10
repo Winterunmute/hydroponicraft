@@ -22,6 +22,7 @@ public class HydroponiCraftMod {
         modEventBus.addListener(HydroponiCraftMod::registerCapabilities);
         modEventBus.addListener(HydroponiCraftMod::buildCreativeTab);
         modEventBus.addListener(ClientSetup::registerRenderers);
+        modEventBus.addListener(ClientSetup::registerScreens);
         NeoForge.EVENT_BUS.addListener(ExplosionQueue::onLevelTick);
         NeoForge.EVENT_BUS.addListener(GatheringChestManager::onServerTick);
     }
@@ -102,6 +103,7 @@ public class HydroponiCraftMod {
 
         // Tools
         event.accept(HydroponiCraftRegistry.REMOTE_DETONATOR.get());
+        event.accept(HydroponiCraftRegistry.ENDER_C4_LAUNCHER.get());
 
         // C4 and colored variants
         event.accept(HydroponiCraftRegistry.C4_ITEM.get());
@@ -109,8 +111,9 @@ public class HydroponiCraftMod {
             event.accept(holder.get());
         }
 
-        // Gathering Chest + Redstone Detonator
+        // Gathering Chest + Filter Template + Redstone Detonator
         event.accept(HydroponiCraftRegistry.GATHERING_CHEST_ITEM.get());
+        event.accept(HydroponiCraftRegistry.FILTER_TEMPLATE.get());
         event.accept(HydroponiCraftRegistry.REDSTONE_DETONATOR_ITEM.get());
 
         // Ender C4

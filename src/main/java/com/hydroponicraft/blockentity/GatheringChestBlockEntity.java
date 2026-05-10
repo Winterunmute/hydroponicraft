@@ -2,6 +2,7 @@ package com.hydroponicraft.blockentity;
 
 import com.hydroponicraft.GatheringChestManager;
 import com.hydroponicraft.HydroponiCraftRegistry;
+import com.hydroponicraft.menu.GatheringChestMenu;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
@@ -11,7 +12,6 @@ import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.ChestMenu;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -24,8 +24,10 @@ import java.util.UUID;
 public class GatheringChestBlockEntity extends BlockEntity implements MenuProvider, Container {
 
     private static final int SLOTS = 108;
+    private static final int FILTER_SLOTS = 9;
 
     public final ItemStackHandler itemHandler = new ItemStackHandler(SLOTS);
+    public final ItemStackHandler filterHandler = new ItemStackHandler(FILTER_SLOTS);
 
     @Nullable private UUID ownerUUID;
     @Nullable private DyeColor linkedColor;
@@ -52,6 +54,16 @@ public class GatheringChestBlockEntity extends BlockEntity implements MenuProvid
         if (linkedColor == null) return true;           // unlinked: catch all
         if (detonationColor == null) return true;       // uncolored C4: any chest catches it
         return linkedColor == detonationColor;
+    }
+
+    /** Returns true if this item type is in the void filter. */
+    public boolean isVoided(ItemStack stack) {
+        if (stack.isEmpty()) return false;
+        for (int i = 0; i < FILTER_SLOTS; i++) {
+            ItemStack filter = filterHandler.getStackInSlot(i);
+            if (!filter.isEmpty() && filter.getItem() == stack.getItem()) return true;
+        }
+        return false;
     }
 
     /** Inserts a stack into the inventory, returns leftovers. */
@@ -122,7 +134,7 @@ public class GatheringChestBlockEntity extends BlockEntity implements MenuProvid
 
     @Override
     public AbstractContainerMenu createMenu(int containerId, Inventory playerInventory, Player player) {
-        return ChestMenu.sixRows(containerId, playerInventory, this);
+        return new GatheringChestMenu(containerId, playerInventory, this);
     }
 
     // ── NBT ───────────────────────────────────────────────────────────────────
@@ -131,6 +143,7 @@ public class GatheringChestBlockEntity extends BlockEntity implements MenuProvid
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
         tag.put("Inventory", itemHandler.serializeNBT(registries));
+        tag.put("FilterInventory", filterHandler.serializeNBT(registries));
         if (ownerUUID != null) tag.putUUID("Owner", ownerUUID);
         if (linkedColor != null) tag.putString("LinkedColor", linkedColor.getName());
     }
@@ -139,6 +152,9 @@ public class GatheringChestBlockEntity extends BlockEntity implements MenuProvid
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
         itemHandler.deserializeNBT(registries, tag.getCompound("Inventory"));
+        if (tag.contains("FilterInventory")) {
+            filterHandler.deserializeNBT(registries, tag.getCompound("FilterInventory"));
+        }
         ownerUUID = tag.hasUUID("Owner") ? tag.getUUID("Owner") : null;
         linkedColor = EnderC4BlockEntity.colorFromName(tag.getString("LinkedColor"));
     }

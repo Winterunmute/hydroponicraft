@@ -29,8 +29,9 @@ public class GatheringChestManager {
     // ── Called by EnderC4Block when detonated ─────────────────────────────────
 
     public static void registerDetonation(Level level, BlockPos pos,
-                                          @Nullable UUID owner, @Nullable DyeColor color) {
-        PENDING.add(new PendingGather(level, pos, owner, color, level.getGameTime() + 40));
+                                          @Nullable UUID owner, @Nullable DyeColor color,
+                                          long expiryTick) {
+        PENDING.add(new PendingGather(level, pos, owner, color, expiryTick));
     }
 
     // ── Chest tracking ────────────────────────────────────────────────────────
@@ -68,7 +69,7 @@ public class GatheringChestManager {
                 c4Pos.getX() + 49, c4Pos.getY() + 49, c4Pos.getZ() + 49);
 
         List<ItemEntity> items = new ArrayList<>(
-                level.getEntitiesOfClass(ItemEntity.class, searchBox, e -> !e.isRemoved()));
+                level.getEntitiesOfClass(ItemEntity.class, searchBox, e -> !e.isRemoved() && e.tickCount < 3));
         if (items.isEmpty()) return;
 
         Set<BlockPos> chestPositions = CHEST_POSITIONS.get(level);
@@ -89,6 +90,11 @@ public class GatheringChestManager {
             while (itemIt.hasNext()) {
                 ItemEntity ie = itemIt.next();
                 if (ie.isRemoved()) { itemIt.remove(); continue; }
+                if (chest.isVoided(ie.getItem())) {
+                    ie.discard();
+                    itemIt.remove();
+                    continue;
+                }
                 ItemStack remaining = chest.insertItem(ie.getItem().copy());
                 if (remaining.isEmpty()) {
                     ie.discard();

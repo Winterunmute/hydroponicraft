@@ -3,6 +3,7 @@ package com.hydroponicraft;
 import com.hydroponicraft.block.C4Block;
 import com.hydroponicraft.block.EnderC4Block;
 import com.hydroponicraft.block.GatheringChestBlock;
+import com.hydroponicraft.menu.GatheringChestMenu;
 import com.hydroponicraft.block.RedstoneDetonatorBlock;
 import com.hydroponicraft.blockentity.C4BlockEntity;
 import com.hydroponicraft.blockentity.EnderC4BlockEntity;
@@ -10,6 +11,8 @@ import com.hydroponicraft.blockentity.GatheringChestBlockEntity;
 import com.hydroponicraft.blockentity.RedstoneDetonatorBlockEntity;
 import com.hydroponicraft.entity.EnderPearlLauncherCart;
 import com.hydroponicraft.item.EnderPearlLauncherCartItem;
+import com.hydroponicraft.item.EnderC4Launcher;
+import com.hydroponicraft.item.FilterTemplate;
 import com.hydroponicraft.item.RemoteDetonator;
 import com.hydroponicraft.block.ChemicalSynthesizerBlock;
 import com.hydroponicraft.block.DigesterBlock;
@@ -29,6 +32,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.DyeColor;
@@ -43,6 +47,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.Fluid;
 import net.neoforged.bus.api.IEventBus;
+import net.neoforged.neoforge.common.extensions.IMenuTypeExtension;
 import net.neoforged.neoforge.fluids.FluidType;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -81,6 +86,9 @@ public class HydroponiCraftRegistry {
     public static final DeferredRegister<EntityType<?>> ENTITY_TYPES =
             DeferredRegister.create(Registries.ENTITY_TYPE, HydroponiCraftMod.MOD_ID);
 
+    public static final DeferredRegister<MenuType<?>> MENUS =
+            DeferredRegister.create(Registries.MENU, HydroponiCraftMod.MOD_ID);
+
     // -------------------------------------------------------------------------
     // Chemical Synthesizer
     // -------------------------------------------------------------------------
@@ -103,6 +111,12 @@ public class HydroponiCraftRegistry {
 
     public static final DeferredHolder<Item, RemoteDetonator> REMOTE_DETONATOR =
             ITEMS.register("remote_detonator", () -> new RemoteDetonator(new Item.Properties().stacksTo(1)));
+
+    public static final DeferredHolder<Item, FilterTemplate> FILTER_TEMPLATE =
+            ITEMS.register("filter_template", () -> new FilterTemplate(new Item.Properties().stacksTo(1)));
+
+    public static final DeferredHolder<Item, EnderC4Launcher> ENDER_C4_LAUNCHER =
+            ITEMS.register("ender_c4_launcher", () -> new EnderC4Launcher(new Item.Properties().stacksTo(1)));
 
     // -------------------------------------------------------------------------
     // C4 block + item
@@ -204,6 +218,9 @@ public class HydroponiCraftRegistry {
             BLOCK_ENTITIES.register("gathering_chest", () -> BlockEntityType.Builder
                     .of(GatheringChestBlockEntity::new, GATHERING_CHEST_BLOCK.get())
                     .build(null));
+
+    public static final DeferredHolder<MenuType<?>, MenuType<GatheringChestMenu>> GATHERING_CHEST_MENU =
+            MENUS.register("gathering_chest", () -> IMenuTypeExtension.create(GatheringChestMenu::new));
 
     // -------------------------------------------------------------------------
     // Redstone Detonator
@@ -337,5 +354,6 @@ public class HydroponiCraftRegistry {
         RECIPE_SERIALIZERS.register(bus);
         CREATIVE_TABS.register(bus);
         ENTITY_TYPES.register(bus);
+        MENUS.register(bus);
     }
 }

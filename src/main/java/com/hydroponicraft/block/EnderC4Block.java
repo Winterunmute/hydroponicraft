@@ -85,13 +85,20 @@ public class EnderC4Block extends C4Block {
             color = ebe.getColor();
         }
         level.removeBlock(pos, false);
-        GatheringChestManager.registerDetonation(level, pos, owner, color);
 
         long now = level.getGameTime();
         double cx = pos.getX() + 0.5;
         double cy = pos.getY() + 0.5;
         double cz = pos.getZ() + 0.5;
         RandomSource rng = level.random;
+
+        // Schedule one gather sweep 2 ticks after each explosion stage so items
+        // are collected before the next TNT blast can destroy them.
+        GatheringChestManager.registerDetonation(level, pos, owner, color, now + 2);
+        GatheringChestManager.registerDetonation(level, pos, owner, color, now + 6);
+        GatheringChestManager.registerDetonation(level, pos, owner, color, now + 10);
+        GatheringChestManager.registerDetonation(level, pos, owner, color, now + 14);
+        GatheringChestManager.registerDetonation(level, pos, owner, color, now + 18);
 
         ExplosionQueue.schedule(level, cx, cy, cz, 10.0f, now);
         ExplosionQueue.schedule(level, cx, cy - 2, cz, 11.0f, now + 4);

@@ -6,21 +6,21 @@ import com.hydroponicraft.block.EnderC4Block;
 import com.hydroponicraft.blockentity.EnderC4BlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.Container;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.Entity;
+import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.vehicle.AbstractMinecart;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ChestMenu;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
@@ -29,18 +29,21 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.DetectorRailBlock;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.AABB;
+import net.neoforged.neoforge.items.ItemStackHandler;
 
 import javax.annotation.Nullable;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-public class EnderPearlLauncherCart extends AbstractMinecart {
+public class EnderPearlLauncherCart extends AbstractMinecart implements Container, MenuProvider {
+
+    private static final int SLOTS = 27;
 
     private int depth = 10;
     @Nullable private UUID ownerUUID;
     @Nullable private BlockPos lastFiredRailPos;
+
+    public final ItemStackHandler inventory = new ItemStackHandler(SLOTS);
 
     public EnderPearlLauncherCart(EntityType<?> type, Level level) {
         super(type, level);
@@ -56,21 +59,63 @@ public class EnderPearlLauncherCart extends AbstractMinecart {
         return HydroponiCraftRegistry.ENDER_PEARL_LAUNCHER_CART_ITEM.get();
     }
 
+    // ── MenuProvider ──────────────────────────────────────────────────────────
+
+    @Override
+    public Component getDisplayName() {
+        return Component.literal("Launcher Cart (depth: " + depth + ")");
+    }
+
+    @Override
+    public AbstractContainerMenu createMenu(int syncId, Inventory playerInventory, Player player) {
+        return ChestMenu.threeRows(syncId, playerInventory, this);
+    }
+
+    // ── Container ─────────────────────────────────────────────────────────────
+
+    @Override public int getContainerSize() { return SLOTS; }
+
+    @Override
+    public boolean isEmpty() {
+        for (int i = 0; i < SLOTS; i++) if (!inventory.getStackInSlot(i).isEmpty()) return false;
+        return true;
+    }
+
+    @Override public ItemStack getItem(int slot) { return inventory.getStackInSlot(slot); }
+
+    @Override
+    public ItemStack removeItem(int slot, int amount) {
+        return inventory.extractItem(slot, amount, false);
+    }
+
+    @Override
+    public ItemStack removeItemNoUpdate(int slot) {
+        ItemStack s = inventory.getStackInSlot(slot).copy();
+        inventory.setStackInSlot(slot, ItemStack.EMPTY);
+        return s;
+    }
+
+    @Override public void setItem(int slot, ItemStack stack) { inventory.setStackInSlot(slot, stack); }
+    @Override public boolean stillValid(Player player) { return true; }
+    @Override public void setChanged() { /* entity auto-saves */ }
+    @Override public void clearContent() {
+        for (int i = 0; i < SLOTS; i++) inventory.setStackInSlot(i, ItemStack.EMPTY);
+    }
+
     // ── Interaction ───────────────────────────────────────────────────────────
 
     @Override
     public InteractionResult interact(Player player, InteractionHand hand) {
-        if (!level().isClientSide()) {
-            ownerUUID = player.getUUID();
-            if (player.isShiftKeyDown()) {
-                depth = Math.max(1, depth - 1);
-            } else {
-                depth = Math.min(50, depth + 1);
-            }
+        if (level().isClientSide()) return InteractionResult.SUCCESS;
+        ownerUUID = player.getUUID();
+        if (player.isShiftKeyDown()) {
+            depth = depth > 1 ? depth - 1 : 50;
             player.displayClientMessage(
                     Component.literal("Launcher Cart depth: " + depth), true);
+        } else {
+            player.openMenu(this);
         }
-        return InteractionResult.sidedSuccess(level().isClientSide());
+        return InteractionResult.CONSUME;
     }
 
     // ── Tick / detector rail ─────────────────────────────────────────────────
@@ -93,36 +138,21 @@ public class EnderPearlLauncherCart extends AbstractMinecart {
     }
 
     private void handleDetectorRail(BlockPos railPos) {
-        // Search for a chest minecart within 3 blocks
-        AABB searchBox = this.getBoundingBox().inflate(3.0);
-        List<Entity> nearby = level().getEntities(this, searchBox);
-
-        Container chestContainer = null;
-        for (Entity e : nearby) {
-            ResourceLocation typeKey = BuiltInRegistries.ENTITY_TYPE.getKey(e.getType());
-            if (typeKey != null && typeKey.equals(ResourceLocation.withDefaultNamespace("chest_minecart"))
-                    && e instanceof Container c) {
-                chestContainer = c;
-                break;
-            }
-        }
-        if (chestContainer == null) return;
-
-        // Find an Ender C4 item (any color)
+        // Find an Ender C4 item in the cart's own inventory
         int foundSlot = -1;
         ItemStack foundStack = ItemStack.EMPTY;
-        for (int i = 0; i < chestContainer.getContainerSize(); i++) {
-            ItemStack s = chestContainer.getItem(i);
+        for (int i = 0; i < SLOTS; i++) {
+            ItemStack s = inventory.getStackInSlot(i);
             if (isEnderC4Item(s)) {
                 foundSlot = i;
-                foundStack = s;
+                foundStack = s.copy();
                 break;
             }
         }
         if (foundSlot < 0 || foundStack.isEmpty()) return;
 
         // Take 1 item
-        chestContainer.removeItem(foundSlot, 1);
+        inventory.extractItem(foundSlot, 1, false);
 
         // Determine which EnderC4Block to place
         Block enderBlock = getEnderC4Block(foundStack);
@@ -175,6 +205,19 @@ public class EnderPearlLauncherCart extends AbstractMinecart {
         return null;
     }
 
+    // ── Drop inventory on death ───────────────────────────────────────────────
+
+    @Override
+    public void remove(RemovalReason reason) {
+        if (!level().isClientSide() && (reason == RemovalReason.KILLED || reason == RemovalReason.DISCARDED)) {
+            for (int i = 0; i < SLOTS; i++) {
+                ItemStack stack = inventory.getStackInSlot(i);
+                if (!stack.isEmpty()) spawnAtLocation(stack);
+            }
+        }
+        super.remove(reason);
+    }
+
     // ── Synced data ───────────────────────────────────────────────────────────
 
     @Override
@@ -189,6 +232,9 @@ public class EnderPearlLauncherCart extends AbstractMinecart {
         super.readAdditionalSaveData(tag);
         depth = tag.contains("Depth") ? Math.clamp(tag.getInt("Depth"), 1, 50) : 10;
         ownerUUID = tag.hasUUID("Owner") ? tag.getUUID("Owner") : null;
+        if (tag.contains("Inventory")) {
+            inventory.deserializeNBT(level().registryAccess(), tag.getCompound("Inventory"));
+        }
     }
 
     @Override
@@ -196,5 +242,6 @@ public class EnderPearlLauncherCart extends AbstractMinecart {
         super.addAdditionalSaveData(tag);
         tag.putInt("Depth", depth);
         if (ownerUUID != null) tag.putUUID("Owner", ownerUUID);
+        tag.put("Inventory", inventory.serializeNBT(level().registryAccess()));
     }
 }
