@@ -22,9 +22,12 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 
 import javax.annotation.Nullable;
@@ -33,10 +36,11 @@ import java.util.Map;
 
 public class EnderC4Launcher extends Item {
 
-    private static final int DEFAULT_DISTANCE = 20;
+    private static final int DEFAULT_DEPTH = 10;
     private static final int STEP = 5;
-    private static final int MIN_DIST = 5;
-    private static final int MAX_DIST = 50;
+    private static final int MIN_DEPTH = 5;
+    private static final int MAX_DEPTH = 50;
+    private static final int MAX_RANGE = 100;   // raycast search range
     private static final int COOLDOWN_TICKS = 20;
 
     public EnderC4Launcher(Properties props) {
@@ -45,17 +49,17 @@ public class EnderC4Launcher extends Item {
 
     // ── Distance NBT ──────────────────────────────────────────────────────────
 
-    private static int getDistance(ItemStack stack) {
+    private static int getDepth(ItemStack stack) {
         CustomData data = stack.get(DataComponents.CUSTOM_DATA);
-        if (data == null) return DEFAULT_DISTANCE;
+        if (data == null) return DEFAULT_DEPTH;
         CompoundTag tag = data.getUnsafe();
-        return tag.contains("Distance") ? tag.getInt("Distance") : DEFAULT_DISTANCE;
+        return tag.contains("Distance") ? tag.getInt("Distance") : DEFAULT_DEPTH;
     }
 
-    private static void setDistance(ItemStack stack, int distance) {
+    private static void setDepth(ItemStack stack, int depth) {
         CustomData existing = stack.get(DataComponents.CUSTOM_DATA);
         CompoundTag tag = existing != null ? existing.copyTag() : new CompoundTag();
-        tag.putInt("Distance", distance);
+        tag.putInt("Distance", depth);
         stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
     }
 
@@ -64,9 +68,9 @@ public class EnderC4Launcher extends Item {
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context,
                                 List<Component> tooltip, TooltipFlag flag) {
-        tooltip.add(Component.literal("Distance: " + getDistance(stack) + " blocks")
+        tooltip.add(Component.literal("Boring depth: " + getDepth(stack) + " blocks")
                 .withStyle(ChatFormatting.YELLOW));
-        tooltip.add(Component.literal("Shift + Right-click to adjust distance")
+        tooltip.add(Component.literal("Shift + Right-click to adjust boring depth")
                 .withStyle(ChatFormatting.GRAY));
     }
 
@@ -103,11 +107,11 @@ public class EnderC4Launcher extends Item {
     }
 
     private static void cycleDistance(Player player, ItemStack stack) {
-        int dist = getDistance(stack) + STEP;
-        if (dist > MAX_DIST) dist = MIN_DIST;
-        setDistance(stack, dist);
+        int depth = getDepth(stack) + STEP;
+        if (depth > MAX_DEPTH) depth = MIN_DEPTH;
+        setDepth(stack, depth);
         player.displayClientMessage(
-                Component.literal("Distance: " + dist + " blocks"), true);
+                Component.literal("Boring depth: " + depth + " blocks"), true);
     }
 
     private void doFire(Level level, Player player, ItemStack launcherStack) {
@@ -121,10 +125,18 @@ public class EnderC4Launcher extends Item {
             return;
         }
 
-        // Calculate target block pos: eye + lookVec * distance
-        int distance = getDistance(launcherStack);
+        // Raycast to find first solid block (max 100 blocks)
+        Vec3 eye = player.getEyePosition();
         Vec3 look = player.getLookAngle();
-        Vec3 target = player.getEyePosition().add(look.scale(distance));
+        Vec3 end = eye.add(look.scale(MAX_RANGE));
+        BlockHitResult hit = level.clip(new ClipContext(
+                eye, end, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, player));
+
+        if (hit.getType() != HitResult.Type.BLOCK) return;  // no solid block in range
+
+        // From the surface hit point, bore [depth] blocks further in look direction
+        int depth = getDepth(launcherStack);
+        Vec3 target = hit.getLocation().add(look.scale(depth));
         BlockPos targetPos = BlockPos.containing(target);
 
         if (!level.isInWorldBounds(targetPos)) return;
